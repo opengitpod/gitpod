@@ -52,6 +52,8 @@ import { isGitpodIo, isLocalPreview } from "./utils";
 import Alert from "./components/Alert";
 import { BlockedRepositories } from "./admin/BlockedRepositories";
 import { AppNotifications } from "./AppNotifications";
+import { publicApiTeamsToProtocol, teamsService } from "./service/public-api";
+import { FeatureFlagContext } from "./contexts/FeatureFlagContext";
 
 const Setup = React.lazy(() => import(/* webpackPrefetch: true */ "./Setup"));
 const Workspaces = React.lazy(() => import(/* webpackPrefetch: true */ "./workspaces/Workspaces"));
@@ -101,6 +103,7 @@ function isWebsiteSlug(pathName: string) {
         "about",
         "blog",
         "careers",
+        "cde",
         "changelog",
         "chat",
         "code-of-conduct",
@@ -154,6 +157,7 @@ function App() {
     const { user, setUser, refreshUserBillingMode } = useContext(UserContext);
     const { teams, setTeams } = useContext(TeamsContext);
     const { setIsDark } = useContext(ThemeContext);
+    const { usePublicApiTeamsService } = useContext(FeatureFlagContext);
 
     const [loading, setLoading] = useState<boolean>(true);
     const [isWhatsNewShown, setWhatsNewShown] = useState(false);
@@ -165,12 +169,12 @@ function App() {
         (async () => {
             var user: User | undefined;
             try {
-                const teamsPromise = getGitpodService().server.getTeams();
-
                 user = await getGitpodService().server.getLoggedInUser();
                 setUser(user);
 
-                const teams = await teamsPromise;
+                const teams = usePublicApiTeamsService
+                    ? publicApiTeamsToProtocol((await teamsService.listTeams({})).teams)
+                    : await getGitpodService().server.getTeams();
 
                 {
                     // if a team was selected previously and we call the root URL (e.g. "gitpod.io"),

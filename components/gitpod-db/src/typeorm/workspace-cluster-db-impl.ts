@@ -34,12 +34,12 @@ export class WorkspaceClusterDBImpl implements WorkspaceClusterDB {
 
     async deleteByName(name: string, applicationCluster: string): Promise<void> {
         const repo = await this.getRepo();
-        await repo.delete({ name, applicationCluster });
+        await repo.update({ name, applicationCluster }, { deleted: true });
     }
 
     async findByName(name: string, applicationCluster: string): Promise<WorkspaceCluster | undefined> {
         const repo = await this.getRepo();
-        return repo.findOne({ name, applicationCluster });
+        return repo.findOne({ name, applicationCluster, deleted: false });
     }
 
     async findFiltered(predicate: WorkspaceClusterFilter): Promise<WorkspaceClusterWoTLS[]> {
@@ -58,7 +58,7 @@ export class WorkspaceClusterDBImpl implements WorkspaceClusterDB {
         let qb = repo
             .createQueryBuilder("wsc")
             .select(Object.keys(prototype).map((k) => `wsc.${k}`))
-            .where("TRUE = TRUE"); // make sure andWhere works
+            .where("wsc.deleted = 0");
         if (predicate.name !== undefined) {
             qb = qb.andWhere("wsc.name = :name", predicate);
         }

@@ -1165,29 +1165,34 @@ data:
             "workdir": "/ide",
             "replacements": [
               {
-                "path": "/ide/out/vs/workbench/workbench.web.api.js",
-                "search": "vscode-cdn.net",
-                "replacement": "gitpod.example.com"
-              },
-              {
                 "path": "/ide/out/vs/workbench/workbench.web.main.js",
                 "search": "vscode-cdn.net",
                 "replacement": "gitpod.example.com"
               },
               {
-                "path": "/ide/out/vs/workbench/services/extensions/worker/extensionHostWorker.js",
-                "search": "vscode-cdn.net",
-                "replacement": "gitpod.example.com"
-              },
-              {
-                "path": "/ide/out/vs/workbench/workbench.web.api.js",
-                "search": "open-vsx.org",
-                "replacement": "open-vsx.gitpod.example.com"
-              },
-              {
                 "path": "/ide/out/vs/workbench/workbench.web.main.js",
                 "search": "open-vsx.org",
                 "replacement": "open-vsx.gitpod.example.com"
+              },
+              {
+                "path": "/ide/out/vs/workbench/workbench.web.api.js",
+                "search": "{{extensionsGalleryItemUrl}}",
+                "replacement": "https://open-vsx.org/vscode/item"
+              },
+              {
+                "path": "/ide/out/vs/workbench/workbench.web.main.js",
+                "search": "{{extensionsGalleryItemUrl}}",
+                "replacement": "https://open-vsx.org/vscode/item"
+              },
+              {
+                "path": "/ide/out/vs/workbench/workbench.web.api.js",
+                "search": "{{trustedDomain}}",
+                "replacement": "https://open-vsx.org"
+              },
+              {
+                "path": "/ide/out/vs/workbench/workbench.web.main.js",
+                "search": "{{trustedDomain}}",
+                "replacement": "https://open-vsx.org"
               },
               {
                 "path": "/ide/out/vs/workbench/workbench.web.main.js",
@@ -3337,7 +3342,7 @@ data:
             "type": "browser",
             "logo": "https://ide.gitpod.example.com/image/ide-logo/vscode.svg",
             "label": "Browser",
-            "image": "eu.gcr.io/gitpod-core-dev/build/ide/code:commit-63ea5f90da48ef1c968a070a8e32972ea5470a8b",
+            "image": "eu.gcr.io/gitpod-core-dev/build/ide/code:commit-6fb745a090b05048a96ab47bdab5e4a88f848b98",
             "latestImage": "eu.gcr.io/gitpod-core-dev/build/ide/code:nightly"
           },
           "code-desktop": {
@@ -3643,6 +3648,13 @@ data:
                   "unknown"
                 ],
                 "defaultValue": "unknown"
+              },
+              {
+                "name": "galleryHost",
+                "allowValues": [
+                  "*"
+                ],
+                "defaultValue": ""
               }
             ]
           },
@@ -4175,6 +4187,13 @@ data:
                   "unknown"
                 ],
                 "defaultValue": "unknown"
+              },
+              {
+                "name": "galleryHost",
+                "allowValues": [
+                  "*"
+                ],
+                "defaultValue": ""
               }
             ]
           }
@@ -4193,6 +4212,13 @@ data:
                   "unknown"
                 ],
                 "defaultValue": "unknown"
+              },
+              {
+                "name": "galleryHost",
+                "allowValues": [
+                  "*"
+                ],
+                "defaultValue": ""
               }
             ],
             "buckets": [
@@ -4208,7 +4234,15 @@ data:
           {
             "name": "gitpod_vscode_extension_gallery_query_duration_seconds",
             "help": "Duration of extension gallery query in seconds",
-            "labels": null,
+            "labels": [
+              {
+                "name": "galleryHost",
+                "allowValues": [
+                  "*"
+                ],
+                "defaultValue": ""
+              }
+            ],
             "buckets": [
               0.1,
               0.5,
@@ -4584,9 +4618,7 @@ data:
       "workspaceDefaults": {
         "workspaceImage": "docker.io/gitpod/workspace-full:latest",
         "previewFeatureFlags": [],
-        "defaultFeatureFlags": [
-          "protected_secrets"
-        ]
+        "defaultFeatureFlags": []
       },
       "session": {
         "maxAgeMs": 259200000,
@@ -4698,7 +4730,7 @@ data:
             "type": "browser",
             "logo": "https://ide.gitpod.example.com/image/ide-logo/vscode.svg",
             "label": "Browser",
-            "image": "eu.gcr.io/gitpod-core-dev/build/ide/code:commit-63ea5f90da48ef1c968a070a8e32972ea5470a8b",
+            "image": "eu.gcr.io/gitpod-core-dev/build/ide/code:commit-6fb745a090b05048a96ab47bdab5e4a88f848b98",
             "latestImage": "eu.gcr.io/gitpod-core-dev/build/ide/code:nightly"
           },
           "code-desktop": {
@@ -7939,7 +7971,7 @@ spec:
   template:
     metadata:
       annotations:
-        gitpod.io/checksum_config: 852534778d4ef3fe1d87dd19fa8290cf02561d3b98c11493053ee39ea8a627b4
+        gitpod.io/checksum_config: 15d99333e20408bb28398cdfffeb658e161608de2b3f3d9fd983a85a796254d5
       creationTimestamp: null
       labels:
         app: gitpod
@@ -8277,7 +8309,7 @@ spec:
   template:
     metadata:
       annotations:
-        gitpod.io/checksum_config: 3b484bff26b16b51cc8e2df68b21ecb4a69ce4cd7a98de9fc2b568210918e948
+        gitpod.io/checksum_config: a15b2b182f09debb86b167e728add4f9d341bc9706bc4e330e1d4a5c9d4deee9
       creationTimestamp: null
       labels:
         app: gitpod
@@ -9003,7 +9035,7 @@ spec:
   template:
     metadata:
       annotations:
-        gitpod.io/checksum_config: 92d9e5b1395f8b3b192de00b493801b656c63073991c1bfc87a90f5205e63226
+        gitpod.io/checksum_config: 73b946defb35ba9413b518f34fc9c39bb287e474874f5e38cc83e7971a85916e
       creationTimestamp: null
       labels:
         app: gitpod

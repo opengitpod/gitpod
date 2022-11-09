@@ -1351,29 +1351,34 @@ data:
             "workdir": "/ide",
             "replacements": [
               {
-                "path": "/ide/out/vs/workbench/workbench.web.api.js",
-                "search": "vscode-cdn.net",
-                "replacement": "gitpod.example.com"
-              },
-              {
                 "path": "/ide/out/vs/workbench/workbench.web.main.js",
                 "search": "vscode-cdn.net",
                 "replacement": "gitpod.example.com"
               },
               {
-                "path": "/ide/out/vs/workbench/services/extensions/worker/extensionHostWorker.js",
-                "search": "vscode-cdn.net",
-                "replacement": "gitpod.example.com"
-              },
-              {
-                "path": "/ide/out/vs/workbench/workbench.web.api.js",
-                "search": "open-vsx.org",
-                "replacement": "open-vsx.gitpod.example.com"
-              },
-              {
                 "path": "/ide/out/vs/workbench/workbench.web.main.js",
                 "search": "open-vsx.org",
                 "replacement": "open-vsx.gitpod.example.com"
+              },
+              {
+                "path": "/ide/out/vs/workbench/workbench.web.api.js",
+                "search": "{{extensionsGalleryItemUrl}}",
+                "replacement": "https://open-vsx.org/vscode/item"
+              },
+              {
+                "path": "/ide/out/vs/workbench/workbench.web.main.js",
+                "search": "{{extensionsGalleryItemUrl}}",
+                "replacement": "https://open-vsx.org/vscode/item"
+              },
+              {
+                "path": "/ide/out/vs/workbench/workbench.web.api.js",
+                "search": "{{trustedDomain}}",
+                "replacement": "https://open-vsx.org"
+              },
+              {
+                "path": "/ide/out/vs/workbench/workbench.web.main.js",
+                "search": "{{trustedDomain}}",
+                "replacement": "https://open-vsx.org"
               },
               {
                 "path": "/ide/out/vs/workbench/workbench.web.main.js",
@@ -4008,7 +4013,7 @@ data:
             "type": "browser",
             "logo": "https://ide.gitpod.example.com/image/ide-logo/vscode.svg",
             "label": "Browser",
-            "image": "eu.gcr.io/gitpod-core-dev/build/ide/code:commit-63ea5f90da48ef1c968a070a8e32972ea5470a8b",
+            "image": "eu.gcr.io/gitpod-core-dev/build/ide/code:commit-6fb745a090b05048a96ab47bdab5e4a88f848b98",
             "latestImage": "eu.gcr.io/gitpod-core-dev/build/ide/code:nightly"
           },
           "code-desktop": {
@@ -4319,6 +4324,13 @@ data:
                   "unknown"
                 ],
                 "defaultValue": "unknown"
+              },
+              {
+                "name": "galleryHost",
+                "allowValues": [
+                  "*"
+                ],
+                "defaultValue": ""
               }
             ]
           },
@@ -4851,6 +4863,13 @@ data:
                   "unknown"
                 ],
                 "defaultValue": "unknown"
+              },
+              {
+                "name": "galleryHost",
+                "allowValues": [
+                  "*"
+                ],
+                "defaultValue": ""
               }
             ]
           }
@@ -4869,6 +4888,13 @@ data:
                   "unknown"
                 ],
                 "defaultValue": "unknown"
+              },
+              {
+                "name": "galleryHost",
+                "allowValues": [
+                  "*"
+                ],
+                "defaultValue": ""
               }
             ],
             "buckets": [
@@ -4884,7 +4910,15 @@ data:
           {
             "name": "gitpod_vscode_extension_gallery_query_duration_seconds",
             "help": "Duration of extension gallery query in seconds",
-            "labels": null,
+            "labels": [
+              {
+                "name": "galleryHost",
+                "allowValues": [
+                  "*"
+                ],
+                "defaultValue": ""
+              }
+            ],
             "buckets": [
               0.1,
               0.5,
@@ -5344,9 +5378,7 @@ data:
       "workspaceDefaults": {
         "workspaceImage": "docker.io/gitpod/workspace-full:latest",
         "previewFeatureFlags": [],
-        "defaultFeatureFlags": [
-          "protected_secrets"
-        ]
+        "defaultFeatureFlags": []
       },
       "session": {
         "maxAgeMs": 259200000,
@@ -5463,7 +5495,7 @@ data:
             "type": "browser",
             "logo": "https://ide.gitpod.example.com/image/ide-logo/vscode.svg",
             "label": "Browser",
-            "image": "eu.gcr.io/gitpod-core-dev/build/ide/code:commit-63ea5f90da48ef1c968a070a8e32972ea5470a8b",
+            "image": "eu.gcr.io/gitpod-core-dev/build/ide/code:commit-6fb745a090b05048a96ab47bdab5e4a88f848b98",
             "latestImage": "eu.gcr.io/gitpod-core-dev/build/ide/code:nightly"
           },
           "code-desktop": {
@@ -8908,7 +8940,7 @@ spec:
     metadata:
       annotations:
         gitpod.io: hello
-        gitpod.io/checksum_config: 8c04c7c1329d7427dcba1dc471c9a3323aa4d5de5578c302bbbc34fd013ca3d4
+        gitpod.io/checksum_config: 83fa4918a8a3e509e417c17dfe176f340594b9e93560245fcf94fea159f23617
         hello: world
       creationTimestamp: null
       labels:
@@ -9274,7 +9306,7 @@ spec:
     metadata:
       annotations:
         gitpod.io: hello
-        gitpod.io/checksum_config: 05679fb283e29bcb12e216617962028f947e33d2e525e7ad0a06ce75f5df6fb3
+        gitpod.io/checksum_config: 74ecbbd8492d8fefde88122798e66f4d886da1cc357b33e62d71b3d80dcc2234
         hello: world
       creationTimestamp: null
       labels:
@@ -10145,7 +10177,7 @@ spec:
     metadata:
       annotations:
         gitpod.io: hello
-        gitpod.io/checksum_config: adce5b1504123c4829f44704c10821db8bc7db39338458e33611c719c2ea3730
+        gitpod.io/checksum_config: 15610884afe78a331979a775d7b7a2743d8c902f93c3ba98ffacb3c15d9c203c
         hello: world
       creationTimestamp: null
       labels:

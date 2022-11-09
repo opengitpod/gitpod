@@ -10,6 +10,7 @@ import (
 	"github.com/gitpod-io/gitpod/common-go/baseserver"
 	"github.com/gitpod-io/gitpod/usage/pkg/db"
 	"github.com/gitpod-io/gitpod/usage/pkg/server"
+	"github.com/gitpod-io/gitpod/usage/pkg/stripe"
 
 	"github.com/gitpod-io/gitpod/installer/pkg/common"
 	"github.com/gitpod-io/gitpod/installer/pkg/config/v1/experimental"
@@ -21,7 +22,7 @@ import (
 func configmap(ctx *common.RenderContext) ([]runtime.Object, error) {
 	cfg := server.Config{
 		LedgerSchedule:     "", // By default controller is disabled
-		ResetUsageSchedule: time.Duration(5 * time.Minute).String(),
+		ResetUsageSchedule: time.Duration(15 * time.Minute).String(),
 		Server: &baseserver.Configuration{
 			Services: baseserver.ServicesConfiguration{
 				GRPC: &baseserver.ServerConfiguration{
@@ -39,12 +40,12 @@ func configmap(ctx *common.RenderContext) ([]runtime.Object, error) {
 
 	expWebAppConfig := getExperimentalWebAppConfig(ctx)
 	if expWebAppConfig != nil && expWebAppConfig.Stripe != nil {
-		cfg.StripePrices = server.StripePrices{
-			IndividualUsagePriceIDs: server.PriceConfig{
+		cfg.StripePrices = stripe.StripePrices{
+			IndividualUsagePriceIDs: stripe.PriceConfig{
 				EUR: expWebAppConfig.Stripe.IndividualUsagePriceIDs.EUR,
 				USD: expWebAppConfig.Stripe.IndividualUsagePriceIDs.USD,
 			},
-			TeamUsagePriceIDs: server.PriceConfig{
+			TeamUsagePriceIDs: stripe.PriceConfig{
 				EUR: expWebAppConfig.Stripe.TeamUsagePriceIDs.EUR,
 				USD: expWebAppConfig.Stripe.TeamUsagePriceIDs.USD,
 			},
@@ -57,6 +58,7 @@ func configmap(ctx *common.RenderContext) ([]runtime.Object, error) {
 		if expUsageConfig.Schedule != "" {
 			cfg.LedgerSchedule = expUsageConfig.Schedule
 		}
+		cfg.ResetUsageSchedule = expUsageConfig.ResetUsageSchedule
 		if expUsageConfig.DefaultSpendingLimit != nil {
 			cfg.DefaultSpendingLimit = *expUsageConfig.DefaultSpendingLimit
 		}

@@ -12,7 +12,6 @@ import {
     WhitelistedRepository,
     WorkspaceImageBuild,
     AuthProviderInfo,
-    CreateWorkspaceMode,
     Token,
     UserEnvVarValue,
     Terms,
@@ -165,6 +164,7 @@ export interface GitpodServer extends JsonRpcServer<GitpodClient>, AdminServer, 
     deleteSSHPublicKey(id: string): Promise<void>;
 
     // Teams
+    getTeam(teamId: string): Promise<Team>;
     getTeams(): Promise<Team[]>;
     getTeamMembers(teamId: string): Promise<TeamMemberInfo[]>;
     createTeam(name: string): Promise<Team>;
@@ -421,7 +421,10 @@ export namespace GitpodServer {
     }
     export interface CreateWorkspaceOptions {
         contextUrl: string;
-        mode?: CreateWorkspaceMode;
+        // whether running workspaces on the same context should be ignored. If false (default) users will be asked.
+        ignoreRunningWorkspaceOnSameCommit?: boolean;
+        ignoreRunningPrebuild?: boolean;
+        allowUsingPreviousPrebuilds?: boolean;
         forceDefaultConfig?: boolean;
     }
     export interface StartWorkspaceOptions {

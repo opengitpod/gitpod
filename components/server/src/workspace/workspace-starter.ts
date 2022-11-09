@@ -114,6 +114,8 @@ import { ExtendedUser } from "@gitpod/ws-manager/lib/constraints";
 import {
     FailedInstanceStartReason,
     increaseFailedInstanceStartCounter,
+    increaseImageBuildsCompletedTotal,
+    increaseImageBuildsStartedTotal,
     increaseSuccessfulInstanceStartCounter,
 } from "../prometheus-metrics";
 import { ContextParser } from "./context-parser-service";
@@ -855,8 +857,6 @@ export class WorkspaceStarter {
                 );
             }
 
-            await this.tryEnableProtectedSecrets(featureFlags, user, billingTier);
-
             featureFlags = featureFlags.filter((f) => !excludeFeatureFlags.includes(f));
 
             await this.tryEnableConnectionLimiting(featureFlags, user, billingTier);
@@ -943,23 +943,6 @@ export class WorkspaceStarter {
             return instance;
         } finally {
             span.finish();
-        }
-    }
-
-    private async tryEnableProtectedSecrets(
-        featureFlags: NamedWorkspaceFeatureFlag[],
-        user: User,
-        billingTier: BillingTier,
-    ) {
-        if (
-            await getExperimentsClientForBackend().getValueAsync("protected_secrets", false, {
-                user,
-                billingTier,
-            })
-        ) {
-            // We roll out the protected secrets feature using a ConfigCat feature flag, to ensure
-            // a smooth, gradual roll out without breaking users.
-            featureFlags.push("protected_secrets");
         }
     }
 
@@ -1255,6 +1238,10 @@ export class WorkspaceStarter {
 
             const result = await client.build({ span }, req, imageBuildLogInfo);
 
+            if (result.actuallyNeedsBuild) {
+                increaseImageBuildsStartedTotal();
+            }
+
             // Update the workspace now that we know what the name of the workspace image will be (which doubles as buildID)
             workspace.imageNameResolved = result.ref;
             span.log({ ref: workspace.imageNameResolved });
@@ -1275,6 +1262,10 @@ export class WorkspaceStarter {
                 // ...and wait for the build to finish
                 buildResult = await result.buildPromise;
                 if (buildResult.getStatus() == BuildStatus.DONE_FAILURE) {
+                    // Register a failed image build only if the image actually needed to be built; ie the build was not a no-op.
+                    if (result.actuallyNeedsBuild) {
+                        increaseImageBuildsCompletedTotal("failed");
+                    }
                     throw new Error(buildResult.getMessage());
                 }
             } catch (err) {
@@ -1295,6 +1286,11 @@ export class WorkspaceStarter {
                 if (!!disposable) {
                     disposable.dispose();
                 }
+            }
+
+            // Register a successful image build only if the image actually needed to be built; ie the build was not a no-op.
+            if (result.actuallyNeedsBuild) {
+                increaseImageBuildsCompletedTotal("succeeded");
             }
 
             // We have just found out how our base image is called - remember that.

@@ -86,9 +86,13 @@ export class DBWorkspaceCluster implements WorkspaceCluster {
     })
     admissionConstraints?: AdmissionConstraint[];
 
-    @Column({
+    @PrimaryColumn({
         type: "varchar",
         length: 60,
     })
     applicationCluster: string;
+
+    // This column triggers the db-sync deletion mechanism. It's not intended for public consumption.
+    @Column()
+    deleted: boolean;
 }

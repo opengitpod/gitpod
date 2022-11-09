@@ -110,18 +110,18 @@ func (mr *MockAPIInterfaceMockRecorder) ControlAdmission(ctx, id, level interfac
 }
 
 // CreateTeam mocks base method.
-func (m *MockAPIInterface) CreateTeam(ctx context.Context, params string) (*Team, error) {
+func (m *MockAPIInterface) CreateTeam(ctx context.Context, teamName string) (*Team, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateTeam", ctx, params)
+	ret := m.ctrl.Call(m, "CreateTeam", ctx, teamName)
 	ret0, _ := ret[0].(*Team)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CreateTeam indicates an expected call of CreateTeam.
-func (mr *MockAPIInterfaceMockRecorder) CreateTeam(ctx, params interface{}) *gomock.Call {
+func (mr *MockAPIInterfaceMockRecorder) CreateTeam(ctx, teamName interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTeam", reflect.TypeOf((*MockAPIInterface)(nil).CreateTeam), ctx, params)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTeam", reflect.TypeOf((*MockAPIInterface)(nil).CreateTeam), ctx, teamName)
 }
 
 // CreateWorkspace mocks base method.
@@ -343,6 +343,21 @@ func (mr *MockAPIInterfaceMockRecorder) GetFeaturedRepositories(ctx interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFeaturedRepositories", reflect.TypeOf((*MockAPIInterface)(nil).GetFeaturedRepositories), ctx)
 }
 
+// GetGenericInvite mocks base method.
+func (m *MockAPIInterface) GetGenericInvite(ctx context.Context, teamID string) (*TeamMembershipInvite, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGenericInvite", ctx, teamID)
+	ret0, _ := ret[0].(*TeamMembershipInvite)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGenericInvite indicates an expected call of GetGenericInvite.
+func (mr *MockAPIInterfaceMockRecorder) GetGenericInvite(ctx, teamID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGenericInvite", reflect.TypeOf((*MockAPIInterface)(nil).GetGenericInvite), ctx, teamID)
+}
+
 // GetGitpodTokenScopes mocks base method.
 func (m *MockAPIInterface) GetGitpodTokenScopes(ctx context.Context, tokenHash string) ([]string, error) {
 	m.ctrl.T.Helper()
@@ -493,19 +508,49 @@ func (mr *MockAPIInterfaceMockRecorder) GetSupportedWorkspaceClasses(ctx interfa
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSupportedWorkspaceClasses", reflect.TypeOf((*MockAPIInterface)(nil).GetSupportedWorkspaceClasses), ctx)
 }
 
-// GetTeamMembers mocks base method.
-func (m *MockAPIInterface) GetTeamMembers(ctx context.Context, params string) ([]*TeamMemberInfo, error) {
+// GetTeam mocks base method.
+func (m *MockAPIInterface) GetTeam(ctx context.Context, teamID string) (*Team, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTeamMembers", ctx, params)
+	ret := m.ctrl.Call(m, "GetTeam", ctx, teamID)
+	ret0, _ := ret[0].(*Team)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTeam indicates an expected call of GetTeam.
+func (mr *MockAPIInterfaceMockRecorder) GetTeam(ctx, teamID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeam", reflect.TypeOf((*MockAPIInterface)(nil).GetTeam), ctx, teamID)
+}
+
+// GetTeamMembers mocks base method.
+func (m *MockAPIInterface) GetTeamMembers(ctx context.Context, teamID string) ([]*TeamMemberInfo, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTeamMembers", ctx, teamID)
 	ret0, _ := ret[0].([]*TeamMemberInfo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetTeamMembers indicates an expected call of GetTeamMembers.
-func (mr *MockAPIInterfaceMockRecorder) GetTeamMembers(ctx, params interface{}) *gomock.Call {
+func (mr *MockAPIInterfaceMockRecorder) GetTeamMembers(ctx, teamID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeamMembers", reflect.TypeOf((*MockAPIInterface)(nil).GetTeamMembers), ctx, params)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeamMembers", reflect.TypeOf((*MockAPIInterface)(nil).GetTeamMembers), ctx, teamID)
+}
+
+// GetTeams mocks base method.
+func (m *MockAPIInterface) GetTeams(ctx context.Context) ([]*Team, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTeams", ctx)
+	ret0, _ := ret[0].([]*Team)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTeams indicates an expected call of GetTeams.
+func (mr *MockAPIInterfaceMockRecorder) GetTeams(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeams", reflect.TypeOf((*MockAPIInterface)(nil).GetTeams), ctx)
 }
 
 // GetToken mocks base method.
@@ -704,18 +749,18 @@ func (mr *MockAPIInterfaceMockRecorder) IsWorkspaceOwner(ctx, workspaceID interf
 }
 
 // JoinTeam mocks base method.
-func (m *MockAPIInterface) JoinTeam(ctx context.Context, params string) (*Team, error) {
+func (m *MockAPIInterface) JoinTeam(ctx context.Context, teamID string) (*Team, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "JoinTeam", ctx, params)
+	ret := m.ctrl.Call(m, "JoinTeam", ctx, teamID)
 	ret0, _ := ret[0].(*Team)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // JoinTeam indicates an expected call of JoinTeam.
-func (mr *MockAPIInterfaceMockRecorder) JoinTeam(ctx, params interface{}) *gomock.Call {
+func (mr *MockAPIInterfaceMockRecorder) JoinTeam(ctx, teamID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "JoinTeam", reflect.TypeOf((*MockAPIInterface)(nil).JoinTeam), ctx, params)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "JoinTeam", reflect.TypeOf((*MockAPIInterface)(nil).JoinTeam), ctx, teamID)
 }
 
 // OpenPort mocks base method.
@@ -747,6 +792,35 @@ func (mr *MockAPIInterfaceMockRecorder) RegisterGithubApp(ctx, installationID in
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterGithubApp", reflect.TypeOf((*MockAPIInterface)(nil).RegisterGithubApp), ctx, installationID)
 }
 
+// RemoveTeamMember mocks base method.
+func (m *MockAPIInterface) RemoveTeamMember(ctx context.Context, teamID, userID string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RemoveTeamMember", ctx, teamID, userID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RemoveTeamMember indicates an expected call of RemoveTeamMember.
+func (mr *MockAPIInterfaceMockRecorder) RemoveTeamMember(ctx, teamID, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveTeamMember", reflect.TypeOf((*MockAPIInterface)(nil).RemoveTeamMember), ctx, teamID, userID)
+}
+
+// ResetGenericInvite mocks base method.
+func (m *MockAPIInterface) ResetGenericInvite(ctx context.Context, teamID string) (*TeamMembershipInvite, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ResetGenericInvite", ctx, teamID)
+	ret0, _ := ret[0].(*TeamMembershipInvite)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ResetGenericInvite indicates an expected call of ResetGenericInvite.
+func (mr *MockAPIInterfaceMockRecorder) ResetGenericInvite(ctx, teamID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ResetGenericInvite", reflect.TypeOf((*MockAPIInterface)(nil).ResetGenericInvite), ctx, teamID)
+}
+
 // SendHeartBeat mocks base method.
 func (m *MockAPIInterface) SendHeartBeat(ctx context.Context, options *SendHeartBeatOptions) error {
 	m.ctrl.T.Helper()
@@ -773,6 +847,20 @@ func (m *MockAPIInterface) SetEnvVar(ctx context.Context, variable *UserEnvVarVa
 func (mr *MockAPIInterfaceMockRecorder) SetEnvVar(ctx, variable interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetEnvVar", reflect.TypeOf((*MockAPIInterface)(nil).SetEnvVar), ctx, variable)
+}
+
+// SetTeamMemberRole mocks base method.
+func (m *MockAPIInterface) SetTeamMemberRole(ctx context.Context, teamID, userID string, role TeamMemberRole) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetTeamMemberRole", ctx, teamID, userID, role)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SetTeamMemberRole indicates an expected call of SetTeamMemberRole.
+func (mr *MockAPIInterfaceMockRecorder) SetTeamMemberRole(ctx, teamID, userID, role interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetTeamMemberRole", reflect.TypeOf((*MockAPIInterface)(nil).SetTeamMemberRole), ctx, teamID, userID, role)
 }
 
 // SetWorkspaceDescription mocks base method.

@@ -1,6 +1,19 @@
 # Change Log
 
-## October 2022
+## November 2022
+- Remove download workspace button from admin ([#14393](https://github.com/gitpod-io/gitpod/pull/14393)) - [@gtsiolis](https://github.com/gtsiolis)
+- Introduced a new project setting that allows starting workspaces based on the last successful prebuild in the git commit history. ([#14461](https://github.com/gitpod-io/gitpod/pull/14461)) - [@svenefftinge](https://github.com/svenefftinge)
+- display the team names which block upgrade to the UBP free tier ([#12805](https://github.com/gitpod-io/gitpod/pull/12805)) - [@geropl](https://github.com/geropl)
+- Gitlab webhooks: play nice, don't respond with code 401. ([#14421](https://github.com/gitpod-io/gitpod/pull/14421)) - [@AlexTugarev](https://github.com/AlexTugarev)
+- Improve pagination usability ([#13590](https://github.com/gitpod-io/gitpod/pull/13590)) - [@Hardik500](https://github.com/Hardik500)
+- [kots] merge custom docker config correctly ([#14432](https://github.com/gitpod-io/gitpod/pull/14432)) - [@Pothulapati](https://github.com/Pothulapati)
+- [local-preview] Update status messages to depend on echo's ([#14391](https://github.com/gitpod-io/gitpod/pull/14391)) - [@Pothulapati](https://github.com/Pothulapati)
+- In JetBrains EAP IDEs, users now have the option to copy the URL from the terminal's ports context menu. ([#14356](https://github.com/gitpod-io/gitpod/pull/14356)) - [@felladrin](https://github.com/felladrin)
+
+##  October 2022
+- Fixed missing .tar file extension from a downloaded workspace ([#13678](https://github.com/gitpod-io/gitpod/pull/13678)) - [@ghostdevv](https://github.com/ghostdevv)
+- More stable docker-compose behavior with lots of containers ([#14259](https://github.com/gitpod-io/gitpod/pull/14259)) - [@utam0k](https://github.com/utam0k)
+- Show warning for inactive projects and allow to resume prebuilds again. ([#14081](https://github.com/gitpod-io/gitpod/pull/14081)) - [@AlexTugarev](https://github.com/AlexTugarev)
 - Deactivate team scope selector on personal usage ([#14238](https://github.com/gitpod-io/gitpod/pull/14238)) - [@gtsiolis](https://github.com/gtsiolis)
 - Reduction of noise error logs ([#14218](https://github.com/gitpod-io/gitpod/pull/14218)) - [@utam0k](https://github.com/utam0k)
 - Fix 'gp open' command to open files in JetBrains Client instead of the backend IDE ([#14182](https://github.com/gitpod-io/gitpod/pull/14182)) - [@felladrin](https://github.com/felladrin)
