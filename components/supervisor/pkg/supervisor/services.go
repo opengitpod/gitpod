@@ -711,7 +711,11 @@ func (c *ControlService) RegisterGRPC(srv *grpc.Server) {
 
 // ExposePort exposes a port.
 func (c *ControlService) ExposePort(ctx context.Context, req *api.ExposePortRequest) (*api.ExposePortResponse, error) {
+	log.WithField("port", req.Port).Info("=========hwen.ExposePort")
 	err := c.portsManager.Expose(ctx, req.Port)
+	if err != nil {
+		log.WithError(err).Info("=========hwen.ExposePort -> err")
+	}
 	return &api.ExposePortResponse{}, err
 }
 
