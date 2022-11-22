@@ -97,6 +97,8 @@ func (s *TokensService) CreatePersonalAccessToken(ctx context.Context, req *conn
 		return nil, connect.NewError(connect.CodeInternal, errors.New("Failed to store personal access token."))
 	}
 
+	// TODO: Send email notification
+
 	return connect.NewResponse(&v1.CreatePersonalAccessTokenResponse{
 		Token: personalAccessTokenToAPI(token, pat.String()),
 	}), nil
@@ -150,18 +152,49 @@ func (s *TokensService) RegeneratePersonalAccessToken(ctx context.Context, req *
 		return nil, err
 	}
 
+	expiry := req.Msg.GetExpirationTime()
+	if !expiry.IsValid() {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("Received invalid Expiration Time, it is a required parameter."))
+	}
+
 	conn, err := getConnection(ctx, s.connectionPool)
 	if err != nil {
 		return nil, err
 	}
 
-	_, _, err = s.getUser(ctx, conn)
+	_, userID, err := s.getUser(ctx, conn)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Infof("Handling RegeneratePersonalAccessToken request for Token ID '%s'", tokenID.String())
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gitpod.experimental.v1.TokensService.RegeneratePersonalAccessToken is not implemented"))
+	pat, err := auth.GeneratePersonalAccessToken(s.signer)
+	if err != nil {
+		log.WithError(err).Errorf("Failed to generate personal access token for user %s", userID.String())
+		return nil, connect.NewError(connect.CodeInternal, errors.New("Failed to generate personal access token."))
+	}
+
+	hash, err := pat.ValueHash()
+	if err != nil {
+		log.WithError(err).Errorf("Failed to generate personal access token value hash for user %s", userID.String())
+		return nil, connect.NewError(connect.CodeInternal, errors.New("Failed to compute personal access token hash."))
+	}
+
+	token, err := db.RegeneratePersonalAccessToken(ctx, s.dbConn, db.PersonalAccessToken{
+		ID:             tokenID,
+		UserID:         userID,
+		Hash:           hash,
+		ExpirationTime: expiry.AsTime().UTC(),
+	})
+	if err != nil {
+		log.WithError(err).Errorf("Failed to regenerate personal access token for user %s", userID.String())
+		return nil, connect.NewError(connect.CodeInternal, errors.New("Failed to regenerate personal access token."))
+	}
+
+	// TODO: Send email notification
+
+	return connect.NewResponse(&v1.RegeneratePersonalAccessTokenResponse{
+		Token: personalAccessTokenToAPI(token, pat.String()),
+	}), nil
 }
 
 func (s *TokensService) UpdatePersonalAccessToken(ctx context.Context, req *connect.Request[v1.UpdatePersonalAccessTokenRequest]) (*connect.Response[v1.UpdatePersonalAccessTokenResponse], error) {

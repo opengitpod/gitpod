@@ -84,6 +84,27 @@ func CreatePersonalAccessToken(ctx context.Context, conn *gorm.DB, req PersonalA
 	return token, nil
 }
 
+func RegeneratePersonalAccessToken(ctx context.Context, conn *gorm.DB, req PersonalAccessToken) (result PersonalAccessToken, err error) {
+	if req.ID == uuid.Nil {
+		return PersonalAccessToken{}, fmt.Errorf("Invalid or empty id")
+	}
+	if req.UserID == uuid.Nil {
+		return PersonalAccessToken{}, fmt.Errorf("Invalid or empty userID")
+	}
+	if req.Hash == "" {
+		return PersonalAccessToken{}, fmt.Errorf("Token hash required")
+	}
+	if req.ExpirationTime.IsZero() {
+		return PersonalAccessToken{}, fmt.Errorf("Expiration time required")
+	}
+
+	if err = conn.Model(&result).Where("userId = ? AND id = ?", req.UserID, req.ID).Updates(req).Error; err != nil {
+		return PersonalAccessToken{}, fmt.Errorf("Failed to update personal access token for user %s", req.UserID)
+	}
+
+	return
+}
+
 func ListPersonalAccessTokensForUser(ctx context.Context, conn *gorm.DB, userID uuid.UUID, pagination Pagination) (*PaginatedResult[PersonalAccessToken], error) {
 	if userID == uuid.Nil {
 		return nil, fmt.Errorf("user ID is a required argument to list personal access tokens for user, got nil")
