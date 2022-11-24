@@ -61,6 +61,7 @@ FN_CACERT="./ca.pem"
 FN_SSLCERT="./ssl.crt"
 FN_SSLKEY="./ssl.key"
 
+# TODO: Also add image-builder-mk3 here?
 cat "${HOME}"/.local/share/mkcert/rootCA.pem > "$FN_CACERT"
 mkcert -cert-file "$FN_SSLCERT" \
   -key-file "$FN_SSLKEY" \
@@ -128,6 +129,7 @@ data:
   tls.key: $SSLKEY
 EOF
 
+# TODO: And here?
 cat << EOF > /var/lib/rancher/k3s/server/manifests/gitpod/ws-manager-client-tls.yaml
 ---
 apiVersion: v1

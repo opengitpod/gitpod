@@ -6,9 +6,10 @@ package image_builder_mk3
 
 import (
 	"fmt"
-	"github.com/gitpod-io/gitpod/common-go/baseserver"
 	"strings"
 	"time"
+
+	"github.com/gitpod-io/gitpod/common-go/baseserver"
 
 	"github.com/gitpod-io/gitpod/common-go/util"
 	"github.com/gitpod-io/gitpod/image-builder/api/config"
@@ -71,6 +72,11 @@ func configmap(ctx *common.RenderContext) ([]runtime.Object, error) {
 			Services: baseserver.ServicesConfiguration{
 				GRPC: &baseserver.ServerConfiguration{
 					Address: fmt.Sprintf("0.0.0.0:%d", RPCPort),
+					TLS: &baseserver.TLSConfiguration{
+						CAPath:   "/certs/ca.crt",
+						CertPath: "/certs/tls.crt",
+						KeyPath:  "/certs/tls.key",
+					},
 				},
 			},
 		},

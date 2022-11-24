@@ -84,6 +84,12 @@ func deployment(ctx *common.RenderContext) ([]runtime.Object, error) {
 				},
 			},
 		},
+		{
+			Name: VolumeTLSCerts,
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{SecretName: TLSSecretNameSecret},
+			},
+		},
 		*common.InternalCAVolume(),
 		*common.NewEmptyDirVolume("cacerts"),
 	}
@@ -102,6 +108,11 @@ func deployment(ctx *common.RenderContext) ([]runtime.Object, error) {
 			Name:      "pull-secret",
 			MountPath: PullSecretFile,
 			SubPath:   ".dockerconfigjson",
+		},
+		{
+			Name:      VolumeTLSCerts,
+			MountPath: "/certs",
+			ReadOnly:  true,
 		},
 	}
 	if vol, mnt, _, ok := common.CustomCACertVolume(ctx); ok {

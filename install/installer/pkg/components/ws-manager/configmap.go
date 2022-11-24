@@ -233,8 +233,22 @@ func configmap(ctx *common.RenderContext) ([]runtime.Object, error) {
 		},
 		ImageBuilderProxy: struct {
 			TargetAddr string "json:\"targetAddr\""
+			TLS        struct {
+				CA          string `json:"ca"`
+				Certificate string `json:"crt"`
+				PrivateKey  string `json:"key"`
+			} `json:"tls"`
 		}{
 			TargetAddr: fmt.Sprintf("%s.%s.svc.cluster.local:%d", common.ImageBuilderComponent, ctx.Namespace, common.ImageBuilderRPCPort),
+			TLS: struct {
+				CA          string `json:"ca"`
+				Certificate string `json:"crt"`
+				PrivateKey  string `json:"key"`
+			}{
+				CA:          "/image-builder-mk3-client-tls-certs/ca.crt",
+				Certificate: "/image-builder-mk3-client-tls-certs/tls.crt",
+				PrivateKey:  "/image-builder-mk3-client-tls-certs/tls.key",
+			},
 		},
 		PProf: struct {
 			Addr string `json:"addr"`
