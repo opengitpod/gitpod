@@ -161,7 +161,7 @@ var runCmd = &cobra.Command{
 		grpc_prometheus.Register(grpcServer)
 
 		if cfg.ImageBuilderProxy.TargetAddr != "" {
-			creds := insecure.NewCredentials()
+			grpcOpts := common_grpc.DefaultClientOptions()
 			if cfg.ImageBuilderProxy.TLS.CA != "" && cfg.ImageBuilderProxy.TLS.Certificate != "" && cfg.ImageBuilderProxy.TLS.PrivateKey != "" {
 				tlsConfig, err := common_grpc.ClientAuthTLSConfig(
 					cfg.ImageBuilderProxy.TLS.CA, cfg.ImageBuilderProxy.TLS.Certificate, cfg.ImageBuilderProxy.TLS.PrivateKey,
@@ -171,11 +171,13 @@ var runCmd = &cobra.Command{
 				if err != nil {
 					log.WithError(err).Fatal("cannot load image-builder-mk3 TLS certs")
 				}
-				creds = credentials.NewTLS(tlsConfig)
+				grpcOpts = append(grpcOpts, grpc.WithTransportCredentials(credentials.NewTLS(tlsConfig)))
+			} else {
+				grpcOpts = append(grpcOpts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 			}
 			// Note: never use block here, because image-builder connects to ws-manager,
 			//       and if we blocked here, ws-manager wouldn't come up, hence we couldn't connect to ws-manager.
-			conn, err := grpc.Dial(cfg.ImageBuilderProxy.TargetAddr, grpc.WithTransportCredentials(creds))
+			conn, err := grpc.Dial(cfg.ImageBuilderProxy.TargetAddr, grpcOpts...)
 			if err != nil {
 				log.WithError(err).Fatal("failed to connect to image builder")
 			}
