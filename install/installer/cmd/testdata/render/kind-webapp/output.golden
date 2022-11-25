@@ -4449,6 +4449,9 @@ spec:
         - mountPath: /ws-manager-client-tls-certs
           name: ws-manager-client-tls-certs
           readOnly: true
+        - mountPath: /image-builder-mk3-client-tls-certs
+          name: image-builder-mk3-tls-certs
+          readOnly: true
         - mountPath: /twilio-config
           name: twilio-secret-volume
           readOnly: true
@@ -4559,6 +4562,9 @@ spec:
       - name: ws-manager-client-tls-certs
         secret:
           secretName: ws-manager-client-tls
+      - name: image-builder-mk3-tls-certs
+        secret:
+          secretName: image-builder-mk3-client-tls
       - name: twilio-secret-volume
         secret:
           optional: true

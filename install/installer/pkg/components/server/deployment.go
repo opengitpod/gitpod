@@ -430,7 +430,7 @@ func deployment(ctx *common.RenderContext) ([]runtime.Object, error) {
 									},
 									{
 										Name:      common.ImageBuilderVolumeTLSCerts,
-										MountPath: "/image-builder-mk3-client-tls-certs",
+										MountPath: "/image-builder-mk3-client-tls-certs", // TODO Use these
 										ReadOnly:  true,
 									},
 								},
