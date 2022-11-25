@@ -19,6 +19,7 @@ func tlssecret(ctx *common.RenderContext) ([]runtime.Object, error) {
 	serverAltNames := []string{
 		fmt.Sprintf("gitpod.%s", ctx.Namespace),
 		fmt.Sprintf("%s.%s.svc", Component, ctx.Namespace),
+		fmt.Sprintf("%s.%s.svc.cluster.local", Component, ctx.Namespace),
 		Component,
 		fmt.Sprintf("%s-dev", Component),
 	}
