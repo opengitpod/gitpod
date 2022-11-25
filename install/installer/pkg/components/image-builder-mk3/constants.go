@@ -12,7 +12,7 @@ const (
 	Component           = common.ImageBuilderComponent
 	RPCPort             = common.ImageBuilderRPCPort
 	RPCPortName         = "service"
-	TLSSecretNameSecret = "image-builder-mk3-tls"
-	TLSSecretNameClient = "image-builder-mk3-client-tls"
-	VolumeTLSCerts      = "image-builder-mk3-tls-certs"
+	TLSSecretNameSecret = common.ImageBuilderTLSSecretServer
+	TLSSecretNameClient = common.ImageBuilderTLSSecretClient
+	VolumeTLSCerts      = common.ImageBuilderVolumeTLSCerts
 )

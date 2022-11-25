@@ -383,10 +383,10 @@ func deployment(ctx *common.RenderContext) ([]runtime.Object, error) {
 									},
 								},
 								{
-									Name: "image-builder-mk3-client-tls-certs",
+									Name: common.ImageBuilderVolumeTLSCerts,
 									VolumeSource: corev1.VolumeSource{
 										Secret: &corev1.SecretVolumeSource{
-											SecretName: imgbuilder.TLSSecretNameClient,
+											SecretName: common.ImageBuilderTLSSecretClient,
 										},
 									},
 								},
@@ -460,7 +460,7 @@ func deployment(ctx *common.RenderContext) ([]runtime.Object, error) {
 										ReadOnly:  true,
 									},
 									{
-										Name:      "image-builder-mk3-client-tls-certs",
+										Name:      common.ImageBuilderVolumeTLSCerts,
 										MountPath: "/image-builder-mk3-client-tls-certs",
 										ReadOnly:  true,
 									},

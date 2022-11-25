@@ -7,7 +7,6 @@ package wsmanager
 import (
 	"github.com/gitpod-io/gitpod/installer/pkg/cluster"
 	"github.com/gitpod-io/gitpod/installer/pkg/common"
-	imgbuilder "github.com/gitpod-io/gitpod/installer/pkg/components/image-builder-mk3"
 	wsdaemon "github.com/gitpod-io/gitpod/installer/pkg/components/ws-daemon"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -76,7 +75,7 @@ func deployment(ctx *common.RenderContext) ([]runtime.Object, error) {
 					MountPath: "/certs",
 					ReadOnly:  true,
 				}, {
-					Name:      imgbuilder.VolumeTLSCerts,
+					Name:      common.ImageBuilderVolumeTLSCerts,
 					MountPath: "/image-builder-mk3-client-tls-certs",
 					ReadOnly:  true,
 				},
@@ -111,9 +110,9 @@ func deployment(ctx *common.RenderContext) ([]runtime.Object, error) {
 			// Same for server?
 			// What about rollout phases?
 			{
-				Name: imgbuilder.VolumeTLSCerts,
+				Name: common.ImageBuilderVolumeTLSCerts,
 				VolumeSource: corev1.VolumeSource{
-					Secret: &corev1.SecretVolumeSource{SecretName: imgbuilder.TLSSecretName},
+					Secret: &corev1.SecretVolumeSource{SecretName: common.ImageBuilderTLSSecretClient},
 				},
 			},
 			{
