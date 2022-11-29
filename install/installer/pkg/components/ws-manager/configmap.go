@@ -245,9 +245,9 @@ func configmap(ctx *common.RenderContext) ([]runtime.Object, error) {
 				Certificate string `json:"crt"`
 				PrivateKey  string `json:"key"`
 			}{
-				CA:          "/image-builder-mk3-client-tls-certs/ca.crt",
-				Certificate: "/image-builder-mk3-client-tls-certs/tls.crt",
-				PrivateKey:  "/image-builder-mk3-client-tls-certs/tls.key",
+				CA:          "/image-builder-mk3-tls-certs/ca.crt",
+				Certificate: "/image-builder-mk3-tls-certs/tls.crt",
+				PrivateKey:  "/image-builder-mk3-tls-certs/tls.key",
 			},
 		},
 		PProf: struct {

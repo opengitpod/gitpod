@@ -16,56 +16,25 @@ import (
 )
 
 func tlssecret(ctx *common.RenderContext) ([]runtime.Object, error) {
-	serverAltNames := []string{
-		fmt.Sprintf("gitpod.%s", ctx.Namespace),
-		fmt.Sprintf("%s.%s.svc", Component, ctx.Namespace),
-		fmt.Sprintf("%s.%s.svc.cluster.local", Component, ctx.Namespace),
-		Component,
-		fmt.Sprintf("%s-dev", Component),
-	}
-	clientAltNames := []string{
-		common.WSManagerComponent,
-		common.ServerComponent,
-		Component,
-	}
-
-	issuer := common.CertManagerCAIssuer
-
 	return []runtime.Object{
 		&certmanagerv1.Certificate{
 			TypeMeta: common.TypeMetaCertificate,
 			ObjectMeta: metav1.ObjectMeta{
-				Name:      TLSSecretNameSecret,
+				Name:      TLSSecretName,
 				Namespace: ctx.Namespace,
 				Labels:    common.DefaultLabels(Component),
 			},
 			Spec: certmanagerv1.CertificateSpec{
 				Duration:   common.InternalCertDuration,
-				SecretName: TLSSecretNameSecret,
-				DNSNames:   serverAltNames,
-				IssuerRef: cmmeta.ObjectReference{
-					Name:  issuer,
-					Kind:  "Issuer",
-					Group: "cert-manager.io",
+				SecretName: TLSSecretName,
+				DNSNames: []string{
+					fmt.Sprintf("gitpod.%s", ctx.Namespace),
+					fmt.Sprintf("%s.%s.svc", Component, ctx.Namespace),
+					fmt.Sprintf("%s.%s.svc.cluster.local", Component, ctx.Namespace),
+					Component,
 				},
-				SecretTemplate: &certmanagerv1.CertificateSecretTemplate{
-					Labels: common.DefaultLabels(Component),
-				},
-			},
-		},
-		&certmanagerv1.Certificate{
-			TypeMeta: common.TypeMetaCertificate,
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      Component,
-				Namespace: ctx.Namespace,
-				Labels:    common.DefaultLabels(Component),
-			},
-			Spec: certmanagerv1.CertificateSpec{
-				Duration:   common.InternalCertDuration,
-				SecretName: TLSSecretNameClient,
-				DNSNames:   clientAltNames,
 				IssuerRef: cmmeta.ObjectReference{
-					Name:  issuer,
+					Name:  common.CertManagerCAIssuer,
 					Kind:  "Issuer",
 					Group: "cert-manager.io",
 				},
@@ -75,4 +44,63 @@ func tlssecret(ctx *common.RenderContext) ([]runtime.Object, error) {
 			},
 		},
 	}, nil
+
+	// serverAltNames := []string{
+	// 	fmt.Sprintf("%s.%s.svc", Component, ctx.Namespace),
+	// 	fmt.Sprintf("%s.%s.svc.cluster.local", Component, ctx.Namespace),
+	// 	Component,
+	// 	fmt.Sprintf("%s-dev", Component),
+	// }
+	// clientAltNames := []string{
+	// 	common.WSManagerComponent,
+	// 	common.ServerComponent,
+	// 	Component,
+	// }
+
+	// issuer := common.CertManagerCAIssuer
+
+	// return []runtime.Object{
+	// 	&certmanagerv1.Certificate{
+	// 		TypeMeta: common.TypeMetaCertificate,
+	// 		ObjectMeta: metav1.ObjectMeta{
+	// 			Name:      TLSSecretNameSecret,
+	// 			Namespace: ctx.Namespace,
+	// 			Labels:    common.DefaultLabels(Component),
+	// 		},
+	// 		Spec: certmanagerv1.CertificateSpec{
+	// 			Duration:   common.InternalCertDuration,
+	// 			SecretName: TLSSecretNameSecret,
+	// 			DNSNames:   serverAltNames,
+	// 			IssuerRef: cmmeta.ObjectReference{
+	// 				Name:  issuer,
+	// 				Kind:  "Issuer",
+	// 				Group: "cert-manager.io",
+	// 			},
+	// 			SecretTemplate: &certmanagerv1.CertificateSecretTemplate{
+	// 				Labels: common.DefaultLabels(Component),
+	// 			},
+	// 		},
+	// 	},
+	// 	&certmanagerv1.Certificate{
+	// 		TypeMeta: common.TypeMetaCertificate,
+	// 		ObjectMeta: metav1.ObjectMeta{
+	// 			Name:      Component,
+	// 			Namespace: ctx.Namespace,
+	// 			Labels:    common.DefaultLabels(Component),
+	// 		},
+	// 		Spec: certmanagerv1.CertificateSpec{
+	// 			Duration:   common.InternalCertDuration,
+	// 			SecretName: TLSSecretNameClient,
+	// 			DNSNames:   clientAltNames,
+	// 			IssuerRef: cmmeta.ObjectReference{
+	// 				Name:  issuer,
+	// 				Kind:  "Issuer",
+	// 				Group: "cert-manager.io",
+	// 			},
+	// 			SecretTemplate: &certmanagerv1.CertificateSecretTemplate{
+	// 				Labels: common.DefaultLabels(Component),
+	// 			},
+	// 		},
+	// 	},
+	// }, nil
 }

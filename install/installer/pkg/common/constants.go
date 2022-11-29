@@ -46,8 +46,7 @@ const (
 	WSProxyComponent            = "ws-proxy"
 	ImageBuilderComponent       = "image-builder-mk3"
 	ImageBuilderRPCPort         = 8080
-	ImageBuilderTLSSecretClient = "image-builder-mk3-client-tls"
-	ImageBuilderTLSSecretServer = "image-builder-mk3-tls"
+	ImageBuilderTLSSecret       = "image-builder-mk3-tls"
 	ImageBuilderVolumeTLSCerts  = "image-builder-mk3-tls-certs"
 	DebugNodePort               = 9229
 

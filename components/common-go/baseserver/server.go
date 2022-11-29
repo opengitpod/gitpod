@@ -15,6 +15,7 @@ import (
 	"syscall"
 
 	common_grpc "github.com/gitpod-io/gitpod/common-go/grpc"
+	"github.com/gitpod-io/gitpod/common-go/log"
 	"github.com/gitpod-io/gitpod/common-go/pprof"
 	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
@@ -294,6 +295,7 @@ func (s *Server) initializeGRPC() error {
 
 	opts := common_grpc.ServerOptionsWithInterceptors(stream, unary)
 	if cfg := s.options.config.Services.GRPC; cfg != nil && cfg.TLS != nil {
+		log.Info("Using TLS for gRPC server")
 		tlsConfig, err := common_grpc.ClientAuthTLSConfig(
 			cfg.TLS.CAPath, cfg.TLS.CertPath, cfg.TLS.KeyPath,
 			common_grpc.WithSetClientCAs(true),

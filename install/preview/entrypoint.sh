@@ -65,7 +65,7 @@ FN_SSLKEY="./ssl.key"
 cat "${HOME}"/.local/share/mkcert/rootCA.pem > "$FN_CACERT"
 mkcert -cert-file "$FN_SSLCERT" \
   -key-file "$FN_SSLKEY" \
-  "*.ws.${DOMAIN}" "*.${DOMAIN}" "${DOMAIN}" "reg.${DOMAIN}" "registry.default.svc.cluster.local" "gitpod.default" "ws-manager.default.svc" "ws-manager" "ws-manager-dev" "registry-facade" "server" "ws-manager-bridge" "ws-proxy" "ws-manager" "ws-daemon.default.svc" "ws-daemon" "wsdaemon"
+  "*.ws.${DOMAIN}" "*.${DOMAIN}" "${DOMAIN}" "reg.${DOMAIN}" "registry.default.svc.cluster.local" "gitpod.default" "ws-manager.default.svc" "ws-manager" "ws-manager-dev" "registry-facade" "server" "ws-manager-bridge" "ws-proxy" "ws-manager" "ws-daemon.default.svc" "ws-daemon" "wsdaemon" "image-builder-mk3" "image-builder-mk3.default.svc" "image-builder-mk3.default.svc.cluster.local"
 
 CACERT=$(base64 -w0 < "$FN_CACERT")
 SSLCERT=$(base64 -w0 < "$FN_SSLCERT")
@@ -129,13 +129,27 @@ data:
   tls.key: $SSLKEY
 EOF
 
-# TODO: And here?
 cat << EOF > /var/lib/rancher/k3s/server/manifests/gitpod/ws-manager-client-tls.yaml
 ---
 apiVersion: v1
 kind: Secret
 metadata:
   name: ws-manager-client-tls
+  labels:
+    app: gitpod
+type: kubernetes.io/tls
+data:
+  ca.crt: $CACERT
+  tls.crt: $SSLCERT
+  tls.key: $SSLKEY
+EOF
+
+cat << EOF > /var/lib/rancher/k3s/server/manifests/gitpod/image-builder-mk3-tls.yaml
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: image-builder-mk3-tls
   labels:
     app: gitpod
 type: kubernetes.io/tls

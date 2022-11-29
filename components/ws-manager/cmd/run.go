@@ -163,9 +163,10 @@ var runCmd = &cobra.Command{
 		if cfg.ImageBuilderProxy.TargetAddr != "" {
 			grpcOpts := common_grpc.DefaultClientOptions()
 			if cfg.ImageBuilderProxy.TLS.CA != "" && cfg.ImageBuilderProxy.TLS.Certificate != "" && cfg.ImageBuilderProxy.TLS.PrivateKey != "" {
+				log.Info("Using TLS for image-builder proxy client")
 				tlsConfig, err := common_grpc.ClientAuthTLSConfig(
 					cfg.ImageBuilderProxy.TLS.CA, cfg.ImageBuilderProxy.TLS.Certificate, cfg.ImageBuilderProxy.TLS.PrivateKey,
-					common_grpc.WithSetClientCAs(true),
+					common_grpc.WithSetRootCAs(true),
 					common_grpc.WithServerName("image-builder-mk3"),
 				)
 				if err != nil {

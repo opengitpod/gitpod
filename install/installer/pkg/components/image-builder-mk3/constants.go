@@ -7,12 +7,11 @@ package image_builder_mk3
 import "github.com/gitpod-io/gitpod/installer/pkg/common"
 
 const (
-	PullSecretFile      = "/config/pull-secret.json"
-	BuilderImage        = "image-builder-mk3/bob"
-	Component           = common.ImageBuilderComponent
-	RPCPort             = common.ImageBuilderRPCPort
-	RPCPortName         = "service"
-	TLSSecretNameSecret = common.ImageBuilderTLSSecretServer
-	TLSSecretNameClient = common.ImageBuilderTLSSecretClient
-	VolumeTLSCerts      = common.ImageBuilderVolumeTLSCerts
+	PullSecretFile = "/config/pull-secret.json"
+	BuilderImage   = "image-builder-mk3/bob"
+	Component      = common.ImageBuilderComponent
+	RPCPort        = common.ImageBuilderRPCPort
+	RPCPortName    = "service"
+	TLSSecretName  = common.ImageBuilderTLSSecret
+	VolumeTLSCerts = common.ImageBuilderVolumeTLSCerts
 )

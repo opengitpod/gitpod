@@ -87,7 +87,7 @@ func deployment(ctx *common.RenderContext) ([]runtime.Object, error) {
 		{
 			Name: VolumeTLSCerts,
 			VolumeSource: corev1.VolumeSource{
-				Secret: &corev1.SecretVolumeSource{SecretName: TLSSecretNameSecret},
+				Secret: &corev1.SecretVolumeSource{SecretName: TLSSecretName},
 			},
 		},
 		*common.InternalCAVolume(),

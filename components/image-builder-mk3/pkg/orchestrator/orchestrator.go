@@ -75,6 +75,7 @@ func NewOrchestratingBuilder(cfg config.Configuration) (res *Orchestrator, err e
 	} else {
 		grpcOpts := common_grpc.DefaultClientOptions()
 		if cfg.WorkspaceManager.TLS.Authority != "" || cfg.WorkspaceManager.TLS.Certificate != "" && cfg.WorkspaceManager.TLS.PrivateKey != "" {
+			log.Info("Using TLS for ws-manager client")
 			tlsConfig, err := common_grpc.ClientAuthTLSConfig(
 				cfg.WorkspaceManager.TLS.Authority, cfg.WorkspaceManager.TLS.Certificate, cfg.WorkspaceManager.TLS.PrivateKey,
 				common_grpc.WithSetRootCAs(true),
