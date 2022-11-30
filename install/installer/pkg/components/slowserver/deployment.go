@@ -17,7 +17,6 @@ import (
 	"github.com/gitpod-io/gitpod/installer/pkg/components/usage"
 
 	"github.com/gitpod-io/gitpod/installer/pkg/common"
-	wsmanager "github.com/gitpod-io/gitpod/installer/pkg/components/ws-manager"
 	wsmanagerbridge "github.com/gitpod-io/gitpod/installer/pkg/components/ws-manager-bridge"
 	configv1 "github.com/gitpod-io/gitpod/installer/pkg/config/v1"
 	"github.com/gitpod-io/gitpod/installer/pkg/config/v1/experimental"
@@ -374,14 +373,6 @@ func deployment(ctx *common.RenderContext) ([]runtime.Object, error) {
 										},
 									},
 								},
-								{
-									Name: "ws-manager-client-tls-certs",
-									VolumeSource: corev1.VolumeSource{
-										Secret: &corev1.SecretVolumeSource{
-											SecretName: wsmanager.TLSSecretNameClient,
-										},
-									},
-								},
 							},
 							volumes...,
 						),
@@ -444,11 +435,6 @@ func deployment(ctx *common.RenderContext) ([]runtime.Object, error) {
 									{
 										Name:      "ide-config",
 										MountPath: "/ide-config",
-										ReadOnly:  true,
-									},
-									{
-										Name:      "ws-manager-client-tls-certs",
-										MountPath: "/ws-manager-client-tls-certs",
 										ReadOnly:  true,
 									},
 								},
