@@ -117,6 +117,20 @@ func (v version) CheckDeprecated(rawCfg interface{}) (map[string]interface{}, []
 				}
 			}
 
+			if cfg.Experimental.WebApp.PublicAPI != nil {
+				// personalAccessTokenSigningKey is now configurable from main config
+				PATkey := cfg.Experimental.WebApp.PublicAPI.PersonalAccessTokenSigningKeySecretName
+				if PATkey != "" {
+					warnings["experimental.webapp.publicAPI.personalAccessTokenSigningKeySecretName"] = PATkey
+					if cfg.PersonalAccessTokenSigningKey.Name != "" {
+						conflicts = append(conflicts, "Cannot set personal access token signing key in both main config and experimental")
+					} else {
+						cfg.PersonalAccessTokenSigningKey.Name = PATkey
+						cfg.PersonalAccessTokenSigningKey.Kind = ObjectRefSecret
+					}
+				}
+			}
+
 			// default workspace base image is now configurable from main config
 			if cfg.Experimental.WebApp.Server != nil {
 
@@ -171,6 +185,9 @@ type Config struct {
 	ContainerRegistry ContainerRegistry `json:"containerRegistry" validate:"required"`
 
 	Certificate ObjectRef `json:"certificate" validate:"required"`
+
+	// Name of the kubernetes object to use for signature of Personal Access Tokens
+	PersonalAccessTokenSigningKey ObjectRef `json:"personalAccessTokenSigningKey" validate:"required"`
 
 	HTTPProxy *ObjectRef `json:"httpProxy,omitempty"`
 

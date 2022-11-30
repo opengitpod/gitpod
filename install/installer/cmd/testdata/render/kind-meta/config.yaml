@@ -3,4 +3,7 @@
 
 apiVersion: v1
 domain: gitpod.example.com
+personalAccessTokenSigningKey:
+  kind: secret
+  name: personal-access-token-signing-key
 kind: Meta

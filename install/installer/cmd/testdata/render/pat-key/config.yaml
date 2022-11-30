@@ -5,12 +5,4 @@ apiVersion: v1
 domain: gitpod.example.com
 personalAccessTokenSigningKey:
   kind: secret
-  name: personal-access-token-signing-key
-workspace:
-  resources:
-    requests:
-      cpu: "42"
-      memory: 42Gi
-    limits:
-      cpu: "84"
-      memory: 84Gi
+  name: pat-secret-override

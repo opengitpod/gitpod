@@ -3,6 +3,9 @@
 
 apiVersion: v1
 domain: gitpod.example.com
+personalAccessTokenSigningKey:
+  kind: secret
+  name: personal-access-token-signing-key
 customization:
   - apiVersion: apps/v1
     kind: StatefulSet
