@@ -7245,9 +7245,6 @@ spec:
         - mountPath: /ide-config
           name: ide-config
           readOnly: true
-        - mountPath: /ws-manager-client-tls-certs
-          name: ws-manager-client-tls-certs
-          readOnly: true
         - mountPath: /twilio-config
           name: twilio-secret-volume
           readOnly: true
@@ -7355,9 +7352,6 @@ spec:
       - configMap:
           name: server-ide-config
         name: ide-config
-      - name: ws-manager-client-tls-certs
-        secret:
-          secretName: ws-manager-client-tls
       - name: twilio-secret-volume
         secret:
           optional: true
@@ -7492,9 +7486,6 @@ spec:
         - mountPath: /config
           name: config
           readOnly: true
-        - mountPath: /ws-manager-client-tls-certs
-          name: ws-manager-client-tls-certs
-          readOnly: true
       - args:
         - --logtostderr
         - --insecure-listen-address=[$(IP)]:9500
@@ -7599,9 +7590,6 @@ spec:
       - configMap:
           name: ws-manager-bridge-config
         name: config
-      - name: ws-manager-client-tls-certs
-        secret:
-          secretName: ws-manager-client-tls
 status: {}
 ---
 # batch/v1/Job migrations

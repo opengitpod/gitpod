@@ -9811,9 +9811,6 @@ spec:
         - mountPath: /ide-config
           name: ide-config
           readOnly: true
-        - mountPath: /ws-manager-client-tls-certs
-          name: ws-manager-client-tls-certs
-          readOnly: true
         - mountPath: /twilio-config
           name: twilio-secret-volume
           readOnly: true
@@ -9921,9 +9918,6 @@ spec:
       - configMap:
           name: server-ide-config
         name: ide-config
-      - name: ws-manager-client-tls-certs
-        secret:
-          secretName: ws-manager-client-tls
       - name: twilio-secret-volume
         secret:
           optional: true
