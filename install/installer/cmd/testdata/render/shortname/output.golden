@@ -5049,9 +5049,7 @@ data:
       "workspaceDefaults": {
         "workspaceImage": "docker.io/gitpod/workspace-full:latest",
         "previewFeatureFlags": [],
-        "defaultFeatureFlags": [
-          "movedImageBuilder"
-        ]
+        "defaultFeatureFlags": []
       },
       "session": {
         "maxAgeMs": 259200000,
@@ -9908,7 +9906,7 @@ spec:
   template:
     metadata:
       annotations:
-        gitpod.io/checksum_config: 7451eab9f1b80b4cf37b405776170e70842cc92f40e77612688b1318a60ccf55
+        gitpod.io/checksum_config: fb70098b8891802e254f67cb2cab3ff40389429d959e77d3733a7eeba60399e5
       creationTimestamp: null
       labels:
         app: gitpod
