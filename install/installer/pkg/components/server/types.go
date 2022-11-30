@@ -150,6 +150,7 @@ type NamedWorkspaceFeatureFlag string
 
 const (
 	NamedWorkspaceFeatureFlagFullWorkspaceBackup NamedWorkspaceFeatureFlag = "full_workspace_backup"
+	NamedWorkspaceFeatureFlagMovedImageBuilder   NamedWorkspaceFeatureFlag = "movedImageBuilder"
 )
 
 type WorkspaceClassCategory string

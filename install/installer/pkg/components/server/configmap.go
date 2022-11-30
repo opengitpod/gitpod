@@ -191,9 +191,11 @@ func configmap(ctx *common.RenderContext) ([]runtime.Object, error) {
 		WorkspaceDefaults: WorkspaceDefaults{
 			WorkspaceImage:      workspaceImage,
 			PreviewFeatureFlags: []NamedWorkspaceFeatureFlag{},
-			DefaultFeatureFlags: []NamedWorkspaceFeatureFlag{},
-			TimeoutDefault:      ctx.Config.Workspace.TimeoutDefault,
-			TimeoutExtended:     ctx.Config.Workspace.TimeoutExtended,
+			DefaultFeatureFlags: []NamedWorkspaceFeatureFlag{
+				NamedWorkspaceFeatureFlagMovedImageBuilder,
+			},
+			TimeoutDefault:  ctx.Config.Workspace.TimeoutDefault,
+			TimeoutExtended: ctx.Config.Workspace.TimeoutExtended,
 		},
 		Session: Session{
 			MaxAgeMs: 259200000,
