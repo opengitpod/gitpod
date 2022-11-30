@@ -14,10 +14,11 @@ import (
 	"github.com/gitpod-io/gitpod/installer/pkg/cluster"
 	contentservice "github.com/gitpod-io/gitpod/installer/pkg/components/content-service"
 	"github.com/gitpod-io/gitpod/installer/pkg/components/usage"
+	wsmanager "github.com/gitpod-io/gitpod/installer/pkg/components/ws-manager"
 
 	"github.com/gitpod-io/gitpod/installer/pkg/common"
-	wsmanager "github.com/gitpod-io/gitpod/installer/pkg/components/ws-manager"
 	wsmanagerbridge "github.com/gitpod-io/gitpod/installer/pkg/components/ws-manager-bridge"
+	config "github.com/gitpod-io/gitpod/installer/pkg/config/v1"
 	configv1 "github.com/gitpod-io/gitpod/installer/pkg/config/v1"
 	"github.com/gitpod-io/gitpod/installer/pkg/config/v1/experimental"
 
@@ -303,6 +304,22 @@ func deployment(ctx *common.RenderContext) ([]runtime.Object, error) {
 		return nil
 	})
 
+	if ctx.Config.Kind != config.InstallationMeta {
+		volumes = append(volumes, corev1.Volume{
+			Name: "ws-manager-client-tls-certs",
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName: wsmanager.TLSSecretNameClient,
+				},
+			},
+		})
+		volumeMounts = append(volumeMounts, corev1.VolumeMount{
+			Name:      "ws-manager-client-tls-certs",
+			MountPath: "/ws-manager-client-tls-certs",
+			ReadOnly:  true,
+		})
+	}
+
 	return []runtime.Object{
 		&appsv1.Deployment{
 			TypeMeta: common.TypeMetaDeployment,
@@ -351,14 +368,6 @@ func deployment(ctx *common.RenderContext) ([]runtime.Object, error) {
 									VolumeSource: corev1.VolumeSource{
 										ConfigMap: &corev1.ConfigMapVolumeSource{
 											LocalObjectReference: corev1.LocalObjectReference{Name: fmt.Sprintf("%s-ide-config", Component)},
-										},
-									},
-								},
-								{
-									Name: "ws-manager-client-tls-certs",
-									VolumeSource: corev1.VolumeSource{
-										Secret: &corev1.SecretVolumeSource{
-											SecretName: wsmanager.TLSSecretNameClient,
 										},
 									},
 								},
@@ -425,11 +434,6 @@ func deployment(ctx *common.RenderContext) ([]runtime.Object, error) {
 									{
 										Name:      "ide-config",
 										MountPath: "/ide-config",
-										ReadOnly:  true,
-									},
-									{
-										Name:      "ws-manager-client-tls-certs",
-										MountPath: "/ws-manager-client-tls-certs",
 										ReadOnly:  true,
 									},
 								},

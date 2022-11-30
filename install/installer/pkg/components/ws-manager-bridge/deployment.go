@@ -11,6 +11,7 @@ import (
 	"github.com/gitpod-io/gitpod/installer/pkg/cluster"
 	"github.com/gitpod-io/gitpod/installer/pkg/common"
 	wsmanager "github.com/gitpod-io/gitpod/installer/pkg/components/ws-manager"
+	"github.com/gitpod-io/gitpod/installer/pkg/config/v1"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -28,6 +29,36 @@ func deployment(ctx *common.RenderContext) ([]runtime.Object, error) {
 		return nil, err
 	} else {
 		hashObj = append(hashObj, objs...)
+	}
+
+	volumes := []corev1.Volume{{
+		Name: "config",
+		VolumeSource: corev1.VolumeSource{
+			ConfigMap: &corev1.ConfigMapVolumeSource{
+				LocalObjectReference: corev1.LocalObjectReference{Name: fmt.Sprintf("%s-config", Component)},
+			},
+		},
+	}}
+	volumeMounts := []corev1.VolumeMount{{
+		Name:      "config",
+		MountPath: "/config",
+		ReadOnly:  true,
+	}}
+	if ctx.Config.Kind != config.InstallationMeta {
+		// Don't mount ws-manager TLS certs for meta clusters.
+		volumes = append(volumes, corev1.Volume{
+			Name: "ws-manager-client-tls-certs",
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName: wsmanager.TLSSecretNameClient,
+				},
+			},
+		})
+		volumeMounts = append(volumeMounts, corev1.VolumeMount{
+			Name:      "ws-manager-client-tls-certs",
+			MountPath: "/ws-manager-client-tls-certs",
+			ReadOnly:  true,
+		})
 	}
 
 	hashObj = append(hashObj, &corev1.Pod{
@@ -95,22 +126,8 @@ func deployment(ctx *common.RenderContext) ([]runtime.Object, error) {
 						DNSPolicy:                     "ClusterFirst",
 						RestartPolicy:                 "Always",
 						TerminationGracePeriodSeconds: pointer.Int64(30),
-						Volumes: []corev1.Volume{{
-							Name: "config",
-							VolumeSource: corev1.VolumeSource{
-								ConfigMap: &corev1.ConfigMapVolumeSource{
-									LocalObjectReference: corev1.LocalObjectReference{Name: fmt.Sprintf("%s-config", Component)},
-								},
-							},
-						}, {
-							Name: "ws-manager-client-tls-certs",
-							VolumeSource: corev1.VolumeSource{
-								Secret: &corev1.SecretVolumeSource{
-									SecretName: wsmanager.TLSSecretNameClient,
-								},
-							},
-						}},
-						InitContainers: []corev1.Container{*common.DatabaseWaiterContainer(ctx), *common.MessageBusWaiterContainer(ctx)},
+						Volumes:                       volumes,
+						InitContainers:                []corev1.Container{*common.DatabaseWaiterContainer(ctx), *common.MessageBusWaiterContainer(ctx)},
 						Containers: []corev1.Container{{
 							Name:            Component,
 							Image:           ctx.ImageName(ctx.Config.Repository, Component, ctx.VersionManifest.Components.WSManagerBridge.Version),
@@ -144,15 +161,7 @@ func deployment(ctx *common.RenderContext) ([]runtime.Object, error) {
 									Name:          baseserver.BuiltinMetricsPortName,
 								},
 							},
-							VolumeMounts: []corev1.VolumeMount{{
-								Name:      "config",
-								MountPath: "/config",
-								ReadOnly:  true,
-							}, {
-								Name:      "ws-manager-client-tls-certs",
-								MountPath: "/ws-manager-client-tls-certs",
-								ReadOnly:  true,
-							}},
+							VolumeMounts: volumeMounts,
 						}, *common.KubeRBACProxyContainer(ctx)},
 					},
 				},

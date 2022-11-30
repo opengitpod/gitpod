@@ -12,6 +12,7 @@ import (
 	componentsworkspace "github.com/gitpod-io/gitpod/installer/pkg/components/components-workspace"
 	dockerregistry "github.com/gitpod-io/gitpod/installer/pkg/components/docker-registry"
 	"github.com/gitpod-io/gitpod/installer/pkg/components/gitpod"
+	wsproxy "github.com/gitpod-io/gitpod/installer/pkg/components/ws-proxy"
 )
 
 var MetaObjects = common.CompositeRenderFunc(
@@ -21,6 +22,7 @@ var MetaObjects = common.CompositeRenderFunc(
 
 var IDEObjects = common.CompositeRenderFunc(
 	componentside.Objects,
+	wsproxy.Objects, // TODO: Don't install on full.
 )
 
 var WebAppObjects = common.CompositeRenderFunc(
