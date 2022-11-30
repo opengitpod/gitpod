@@ -18,7 +18,6 @@ import (
 	"github.com/gitpod-io/gitpod/installer/pkg/components/slowserver"
 	"github.com/gitpod-io/gitpod/installer/pkg/components/toxiproxy"
 	"github.com/gitpod-io/gitpod/installer/pkg/components/usage"
-	wsmanager "github.com/gitpod-io/gitpod/installer/pkg/components/ws-manager"
 	wsmanagerbridge "github.com/gitpod-io/gitpod/installer/pkg/components/ws-manager-bridge"
 )
 
@@ -32,7 +31,6 @@ var Objects = common.CompositeRenderFunc(
 	rabbitmq.Objects,
 	server.Objects,
 	slowserver.Objects,
-	wsmanager.Objects,
 	wsmanagerbridge.Objects,
 	public_api_server.Objects,
 	usage.Objects,
