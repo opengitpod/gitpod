@@ -62,6 +62,8 @@ func (b *Builder) Build() error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	time.Sleep(100 * time.Hour)
+
 	err = b.buildBaseLayer(ctx, cl)
 	if err != nil {
 		return err
@@ -137,7 +139,7 @@ func buildImage(ctx context.Context, contextDir, dockerfile, authLayer, target s
 	}
 
 	buildctlArgs := []string{
-		// "--debug",
+		"--debug",
 		"build",
 		"--progress=plain",
 		"--output=type=image,name=" + target + ",push=true,oci-mediatypes=true",
