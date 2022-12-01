@@ -62,7 +62,7 @@ func (b *Builder) Build() error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	time.Sleep(100 * time.Hour)
+	// time.Sleep(100 * time.Hour)
 
 	err = b.buildBaseLayer(ctx, cl)
 	if err != nil {
