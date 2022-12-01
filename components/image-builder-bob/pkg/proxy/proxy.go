@@ -127,7 +127,7 @@ func (proxy *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if repo == nil {
-		log.Error("Not found here? %s %d", alias, len(proxy.Aliases))
+		log.Errorf("Not found here? %s %d", alias, len(proxy.Aliases))
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
 	}
