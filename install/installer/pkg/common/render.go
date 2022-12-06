@@ -67,6 +67,7 @@ type GeneratedValues struct {
 	InternalRegistryPassword     string
 	InternalRegistrySharedSecret string
 	MessageBusPassword           string
+	Region                       string
 }
 
 type RenderContext struct {
@@ -168,6 +169,9 @@ func (r *RenderContext) generateValues() error {
 		messageBusPassword = "uq4KxOLtrA-QsDTfuwQ-"
 	}
 	r.Values.MessageBusPassword = messageBusPassword
+
+	// TODO(jenting): update the region from config file
+	r.Values.Region = "us-west-1"
 
 	return nil
 }
