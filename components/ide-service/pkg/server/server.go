@@ -250,123 +250,142 @@ func (s *IDEServiceServer) ResolveWorkspaceConfig(ctx context.Context, req *api.
 		WebImage:        defaultIde.Image,
 	}
 
-	// TODO: reconsider this
-	// if req.Type != api.WorkspaceType_REGULAR {
-	// 	return resp, nil
-	// }
-
 	var wsConfig *gitpodapi.GitpodConfig
-	var wsContext *WorkspaceContext
-	var ideSettings *IDESettings
 
-	if req.IdeSettings != "" {
-		if err := json.Unmarshal([]byte(req.IdeSettings), &ideSettings); err != nil {
-			log.WithError(err).WithField("ideSetting", req.IdeSettings).Error("failed to parse ide settings")
-		}
-	}
 	if req.WorkspaceConfig != "" {
 		if err := json.Unmarshal([]byte(req.WorkspaceConfig), &wsConfig); err != nil {
 			log.WithError(err).WithField("workspaceConfig", req.WorkspaceConfig).Error("failed to parse workspace config")
 		}
 	}
-	if req.Context != "" {
-		if err := json.Unmarshal([]byte(req.Context), &wsContext); err != nil {
-			log.WithError(err).WithField("context", req.Context).Error("failed to parse context")
-		}
-	}
 
-	userIdeName := ""
-	useLatest := false
+	if req.Type == api.WorkspaceType_REGULAR {
+		var ideSettings *IDESettings
+		var wsContext *WorkspaceContext
 
-	if ideSettings != nil {
-		userIdeName = ideSettings.DefaultIde
-		useLatest = ideSettings.UseLatestVersion
-	}
-
-	chosenIDE := defaultIde
-
-	getUserIDEImage := func(ideOption *config.IDEOption) string {
-		if useLatest && ideOption.LatestImage != "" {
-			return ideOption.LatestImage
-		}
-
-		return ideOption.Image
-	}
-
-	getUserPluginImage := func(ideOption *config.IDEOption) string {
-		if useLatest && ideOption.PluginLatestImage != "" {
-			return ideOption.PluginLatestImage
-		}
-
-		return ideOption.PluginImage
-	}
-
-	if userIdeName != "" {
-		if ide, ok := ideConfig.IdeOptions.Options[userIdeName]; ok {
-			chosenIDE = &ide
-
-			// TODO: Currently this variable reflects the IDE selected in
-			// user's settings for backward compatibility but in the future
-			// we want to make it represent the actual IDE.
-			ideAlias := api.EnvironmentVariable{
-				Name:  "GITPOD_IDE_ALIAS",
-				Value: userIdeName,
+		if req.IdeSettings != "" {
+			if err := json.Unmarshal([]byte(req.IdeSettings), &ideSettings); err != nil {
+				log.WithError(err).WithField("ideSetting", req.IdeSettings).Error("failed to parse ide settings")
 			}
-			resp.Envvars = append(resp.Envvars, &ideAlias)
 		}
-	}
 
-	// we always need WebImage for when the user chooses a desktop ide
-	resp.WebImage = getUserIDEImage(defaultIde)
+		if req.Context != "" {
+			if err := json.Unmarshal([]byte(req.Context), &wsContext); err != nil {
+				log.WithError(err).WithField("context", req.Context).Error("failed to parse context")
+			}
+		}
 
-	var desktopImageLayer string
-	var desktopPluginImageLayer string
-	if chosenIDE.Type == config.IDETypeDesktop {
-		desktopImageLayer = getUserIDEImage(chosenIDE)
-		desktopPluginImageLayer = getUserPluginImage(chosenIDE)
-	} else {
-		resp.WebImage = getUserIDEImage(chosenIDE)
-	}
+		userIdeName := ""
+		useLatest := false
 
-	ideName, referrer := s.resolveReferrerIDE(ideConfig, wsContext, userIdeName)
-	if ideName != "" {
-		resp.RefererIde = ideName
-		desktopImageLayer = getUserIDEImage(referrer)
-		desktopPluginImageLayer = getUserPluginImage(referrer)
-	}
+		if ideSettings != nil {
+			userIdeName = ideSettings.DefaultIde
+			useLatest = ideSettings.UseLatestVersion
+		}
 
-	if desktopImageLayer != "" {
-		resp.IdeImageLayers = append(resp.IdeImageLayers, desktopImageLayer)
-		if desktopPluginImageLayer != "" {
-			resp.IdeImageLayers = append(resp.IdeImageLayers, desktopPluginImageLayer)
+		chosenIDE := defaultIde
+
+		getUserIDEImage := func(ideOption *config.IDEOption) string {
+			if useLatest && ideOption.LatestImage != "" {
+				return ideOption.LatestImage
+			}
+
+			return ideOption.Image
+		}
+
+		getUserPluginImage := func(ideOption *config.IDEOption) string {
+			if useLatest && ideOption.PluginLatestImage != "" {
+				return ideOption.PluginLatestImage
+			}
+
+			return ideOption.PluginImage
+		}
+
+		if userIdeName != "" {
+			if ide, ok := ideConfig.IdeOptions.Options[userIdeName]; ok {
+				chosenIDE = &ide
+
+				// TODO: Currently this variable reflects the IDE selected in
+				// user's settings for backward compatibility but in the future
+				// we want to make it represent the actual IDE.
+				ideAlias := api.EnvironmentVariable{
+					Name:  "GITPOD_IDE_ALIAS",
+					Value: userIdeName,
+				}
+				resp.Envvars = append(resp.Envvars, &ideAlias)
+			}
+		}
+
+		// we always need WebImage for when the user chooses a desktop ide
+		resp.WebImage = getUserIDEImage(defaultIde)
+
+		var desktopImageLayer string
+		var desktopPluginImageLayer string
+		if chosenIDE.Type == config.IDETypeDesktop {
+			desktopImageLayer = getUserIDEImage(chosenIDE)
+			desktopPluginImageLayer = getUserPluginImage(chosenIDE)
+		} else {
+			resp.WebImage = getUserIDEImage(chosenIDE)
+		}
+
+		ideName, referrer := s.resolveReferrerIDE(ideConfig, wsContext, userIdeName)
+		if ideName != "" {
+			resp.RefererIde = ideName
+			desktopImageLayer = getUserIDEImage(referrer)
+			desktopPluginImageLayer = getUserPluginImage(referrer)
+		}
+
+		if desktopImageLayer != "" {
+			resp.IdeImageLayers = append(resp.IdeImageLayers, desktopImageLayer)
+			if desktopPluginImageLayer != "" {
+				resp.IdeImageLayers = append(resp.IdeImageLayers, desktopPluginImageLayer)
+			}
 		}
 	}
 
 	jbGW, ok := ideConfig.IdeOptions.Clients["jetbrains-gateway"]
 	if req.Type == api.WorkspaceType_PREBUILD && ok {
 		warmUpTask := ""
+		var pluginStableImage string
+		var pluginLatestImage string
 		for _, alias := range jbGW.DesktopIDEs {
 			prebuilds := getPrebuilds(wsConfig, alias)
 			if prebuilds != nil {
 				if prebuilds.Version != "latest" {
-					template := `
+					if ide, ok := ideConfig.IdeOptions.Options[alias]; ok {
+						pluginStableImage = ide.PluginImage
+						resp.IdeImageLayers = append(resp.IdeImageLayers, ide.Image)
+						template := `
 echo 'warming up stable release of ${key}...'
 JETBRAINS_BACKEND_QUALIFIER=stable /ide-desktop/${key}/status warmup ${key}
 `
-					template = strings.ReplaceAll(template, "${key}", alias)
-					warmUpTask += template
+						template = strings.ReplaceAll(template, "${key}", alias)
+						warmUpTask += template
+					}
 				}
 
 				if prebuilds.Version != "stable" {
-					template := `
+					if ide, ok := ideConfig.IdeOptions.Options[alias]; ok {
+						pluginLatestImage = ide.PluginLatestImage
+						resp.IdeImageLayers = append(resp.IdeImageLayers, ide.LatestImage)
+						template := `
 echo 'warming up stable release of ${key}...'
 JETBRAINS_BACKEND_QUALIFIER=latest /ide-desktop/${key}-latest/status warmup ${key}
 `
-					template = strings.ReplaceAll(template, "${key}", alias)
-					warmUpTask += template
+						template = strings.ReplaceAll(template, "${key}", alias)
+						warmUpTask += template
+					}
 				}
 			}
 		}
+
+		if pluginStableImage != "" {
+			resp.IdeImageLayers = append(resp.IdeImageLayers, pluginStableImage)
+		}
+
+		if pluginLatestImage != "" {
+			resp.IdeImageLayers = append(resp.IdeImageLayers, pluginLatestImage)
+		}
+
 		if warmUpTask != "" {
 			warmUpEncoded := new(bytes.Buffer)
 			enc := json.NewEncoder(warmUpEncoded)
@@ -382,6 +401,7 @@ JETBRAINS_BACKEND_QUALIFIER=latest /ide-desktop/${key}-latest/status warmup ${ke
 			resp.Tasks = warmUpEncoded.String()
 		}
 	}
+
 	return
 }
 
