@@ -10,5 +10,6 @@ import (
 
 // Config configures this service
 type ServiceConfig struct {
-	Server *baseserver.Configuration `json:"server"`
+	Server                *baseserver.Configuration `json:"server"`
+	OIDCClientsConfigFile string                    `json:"oidcClientsConfigFile,omitempty"`
 }
