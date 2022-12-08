@@ -188,20 +188,6 @@ type WorkspaceContext struct {
 	ReferrerIde string `json:"referrerIde,omitempty"`
 }
 
-var JetbrainsCode map[string]string
-
-func init() {
-	JetbrainsCode = make(map[string]string)
-	JetbrainsCode["intellij"] = "IIU"
-	JetbrainsCode["goland"] = "GO"
-	JetbrainsCode["pycharm"] = "PCP"
-	JetbrainsCode["phpstorm"] = "PS"
-	JetbrainsCode["rubymine"] = "RM"
-	JetbrainsCode["webstorm"] = "WS"
-	JetbrainsCode["rider"] = "RD"
-	JetbrainsCode["clion"] = "CL"
-}
-
 func (s *IDEServiceServer) resolveReferrerIDE(ideConfig *config.IDEConfig, wsCtx *WorkspaceContext, chosenIDEName string) (ideName string, ideOption *config.IDEOption) {
 	if wsCtx == nil || wsCtx.Referrer == "" {
 		return
@@ -365,55 +351,19 @@ func (s *IDEServiceServer) ResolveWorkspaceConfig(ctx context.Context, req *api.
 				if prebuilds.Version != "latest" {
 					template := `
 echo 'warming up stable release of ${key}...'
-echo 'downloading stable ${key} backend...'
-mkdir /tmp/backend
-curl -sSLo /tmp/backend/backend.tar.gz "https://download.jetbrains.com/product?type=release&distribution=linux&code=${productCode}"
-tar -xf /tmp/backend/backend.tar.gz --strip-components=1 --directory /tmp/backend
-
-echo 'configuring JB system config and caches aligned with runtime...'
-printf '\nshared.indexes.download.auto.consent=true' >> "/tmp/backend/bin/idea.properties"
-unset JAVA_TOOL_OPTIONS
-export IJ_HOST_CONFIG_BASE_DIR=/workspace/.config/JetBrains
-export IJ_HOST_SYSTEM_BASE_DIR=/workspace/.cache/JetBrains
-
-echo 'running stable ${key} backend in warmup mode...'
-/tmp/backend/bin/remote-dev-server.sh warmup "$GITPOD_REPO_ROOT"
-
-echo 'removing stable ${key} backend...'
-rm -rf /tmp/backend
+JETBRAINS_BACKEND_QUALIFIER=stable /ide-desktop/${key}/status warmup ${key}
 `
-					if code, ok := JetbrainsCode[alias]; ok {
-						template = strings.ReplaceAll(template, "${key}", alias)
-						template = strings.ReplaceAll(template, "${productCode}", code)
-						warmUpTask += template
-					}
+					template = strings.ReplaceAll(template, "${key}", alias)
+					warmUpTask += template
 				}
 
 				if prebuilds.Version != "stable" {
 					template := `
-echo 'warming up latest release of ${key}...'
-echo 'downloading latest ${key} backend...'
-mkdir /tmp/backend-latest
-curl -sSLo /tmp/backend-latest/backend-latest.tar.gz "https://download.jetbrains.com/product?type=release,eap,rc&distribution=linux&code=${productCode}"
-tar -xf /tmp/backend-latest/backend-latest.tar.gz --strip-components=1 --directory /tmp/backend-latest
-
-echo 'configuring JB system config and caches aligned with runtime...'
-printf '\nshared.indexes.download.auto.consent=true' >> "/tmp/backend-latest/bin/idea.properties"
-unset JAVA_TOOL_OPTIONS
-export IJ_HOST_CONFIG_BASE_DIR=/workspace/.config/JetBrains-latest
-export IJ_HOST_SYSTEM_BASE_DIR=/workspace/.cache/JetBrains-latest
-
-echo 'running ${key} backend in warmup mode...'
-/tmp/backend-latest/bin/remote-dev-server.sh warmup "$GITPOD_REPO_ROOT"
-
-echo 'removing latest ${key} backend...'
-rm -rf /tmp/backend-latest
+echo 'warming up stable release of ${key}...'
+JETBRAINS_BACKEND_QUALIFIER=latest /ide-desktop/${key}-latest/status warmup ${key}
 `
-					if code, ok := JetbrainsCode[alias]; ok {
-						template = strings.ReplaceAll(template, "${key}", alias)
-						template = strings.ReplaceAll(template, "${productCode}", code)
-						warmUpTask += template
-					}
+					template = strings.ReplaceAll(template, "${key}", alias)
+					warmUpTask += template
 				}
 			}
 		}
