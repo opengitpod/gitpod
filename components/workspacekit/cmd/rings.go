@@ -953,6 +953,7 @@ func handleExit(ec *int) {
 	if exitCode != 0 {
 		sleepForDebugging()
 	}
+	time.Sleep(1 * time.Minute)
 	os.Exit(exitCode)
 }
 

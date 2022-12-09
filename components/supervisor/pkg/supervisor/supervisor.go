@@ -222,6 +222,7 @@ func Run(options ...RunOption) {
 	if err != nil {
 		log.WithError(err).Fatal("cannot find Gitpod API endpoint")
 	}
+	log.Info("========================1")
 	var (
 		ideReady                       = &ideReadyState{cond: sync.NewCond(&sync.Mutex{})}
 		desktopIdeReady *ideReadyState = nil
@@ -237,17 +238,22 @@ func Run(options ...RunOption) {
 
 		notificationService = NewNotificationService()
 	)
+	log.Info("========================2")
 	if cfg.DesktopIDE != nil {
 		desktopIdeReady = &ideReadyState{cond: sync.NewCond(&sync.Mutex{})}
 	}
 	if !cfg.isHeadless() {
+		log.Info("========================3")
 		go trackReadiness(ctx, gitpodService, cfg, cstate, ideReady, desktopIdeReady)
 	}
+	log.Info("========================4")
 	tokenService.provider[KindGit] = []tokenProvider{NewGitTokenProvider(gitpodService, cfg.WorkspaceConfig, notificationService)}
+	log.Info("========================5")
 
 	gitpodConfigService := config.NewConfigService(cfg.RepoRoot+"/.gitpod.yml", cstate.ContentReady(), log.Log)
 	go gitpodConfigService.Watch(ctx)
 
+	log.Info("========================6")
 	portMgmt := ports.NewManager(
 		createExposedPortsImpl(cfg, gitpodService),
 		&ports.PollingServedPortsObserver{
@@ -257,6 +263,7 @@ func Run(options ...RunOption) {
 		tunneledPortsService,
 		internalPorts...,
 	)
+	log.Info("========================7")
 
 	topService := NewTopService()
 	topService.Observe(ctx)
@@ -273,15 +280,19 @@ func Run(options ...RunOption) {
 		if err != nil {
 			log.WithError(err).Error("grpc metrics: failed to parse gitpod host")
 		} else {
+			log.Info("========================9")
 			metricsReporter = metrics.NewGrpcMetricsReporter(gitpodHost)
 			if err := supervisorMetrics.Register(metricsReporter.Registry); err != nil {
 				log.WithError(err).Error("could not register supervisor metrics")
 			}
+			log.Info("========================10")
 			if err := gitpodService.RegisterMetrics(metricsReporter.Registry); err != nil {
 				log.WithError(err).Error("could not register public api metrics")
 			}
+			log.Info("========================11")
 		}
 	}
+	log.Info("========================12")
 
 	termMux := terminal.NewMux()
 	termMuxSrv := terminal.NewMuxTerminalService(termMux)
@@ -1572,6 +1583,7 @@ func analysePerfChanges(ctx context.Context, wscfg *Config, w analytics.Writer, 
 }
 
 func analyseConfigChanges(ctx context.Context, wscfg *Config, w analytics.Writer, cfgobs config.ConfigInterface, gitpodAPI serverapi.APIInterface) {
+
 	ownerID, err := gitpodAPI.GetOwnerID(ctx, wscfg.WorkspaceID)
 	if err != nil {
 		log.WithError(err).Error("gitpod config analytics: failed to resolve workspace info")
@@ -1618,6 +1630,7 @@ func trackReadiness(ctx context.Context, gitpodService serverapi.APIInterface, c
 		Timestamp           int64  `json:"timestamp,omitempty"`
 	}
 	trackFn := func(ctx context.Context, gitpodService serverapi.APIInterface, cfg *Config, kind string) {
+		log.Info("========================13")
 		err := gitpodService.TrackEvent(ctx, &gitpod.RemoteTrackMessage{
 			Event: "supervisor_readiness",
 			Properties: SupervisorReadiness{
@@ -1627,6 +1640,7 @@ func trackReadiness(ctx context.Context, gitpodService serverapi.APIInterface, c
 				Timestamp:           time.Now().UnixMilli(),
 			},
 		})
+		log.Info("========================14")
 		if err != nil {
 			log.WithError(err).Error("error tracking supervisor_readiness")
 		}
