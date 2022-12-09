@@ -15,6 +15,7 @@ import (
 
 	agent "github.com/gitpod-io/gitpod/test/pkg/agent/workspace/api"
 	"github.com/gitpod-io/gitpod/test/pkg/integration"
+	"github.com/gitpod-io/gitpod/test/pkg/types"
 )
 
 const (
@@ -74,6 +75,9 @@ func TestGitHooks(t *testing.T) {
 			for _, ff := range ffs {
 				for _, test := range tests {
 					t.Run(test.ContextURL+"_"+ff.Name, func(t *testing.T) {
+						t.Log(types.ContentInit)
+						t.Log("git hooks should be ignore")
+
 						t.Parallel()
 
 						ctx, cancel := context.WithTimeout(context.Background(), time.Duration(5*len(tests)*len(ffs))*time.Minute)

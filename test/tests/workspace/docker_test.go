@@ -15,12 +15,16 @@ import (
 
 	agent "github.com/gitpod-io/gitpod/test/pkg/agent/workspace/api"
 	"github.com/gitpod-io/gitpod/test/pkg/integration"
+	"github.com/gitpod-io/gitpod/test/pkg/types"
 )
 
 func TestRunDocker(t *testing.T) {
 	f := features.New("docker").
 		WithLabel("component", "workspace").
 		Assess("it should start a container", func(_ context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log(types.Docker)
+			t.Log("being able to run docker container on the workspace")
+
 			t.Parallel()
 
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)

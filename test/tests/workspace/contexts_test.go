@@ -14,6 +14,7 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/features"
 
 	"github.com/gitpod-io/gitpod/test/pkg/integration"
+	"github.com/gitpod-io/gitpod/test/pkg/types"
 )
 
 type ContextTest struct {
@@ -144,6 +145,8 @@ func runContextTests(t *testing.T, tests []ContextTest) {
 			for _, ff := range ffs {
 				for _, test := range tests {
 					t.Run(test.ContextURL+"_"+ff.Name, func(t *testing.T) {
+						t.Log(types.ContentInit)
+						t.Logf("open %s for %s", test.ContextURL, test.Name)
 						if test.Skip {
 							t.SkipNow()
 						}

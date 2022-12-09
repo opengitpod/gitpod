@@ -25,7 +25,7 @@ import (
 func TestBackup(t *testing.T) {
 	f := features.New("backup").
 		WithLabel("component", "ws-manager").
-		Assess("it should start a workspace, create a file and successfully create a backup", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		Assess("it should create a file and successfully create a backup", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			tests := []struct {
 				Name             string
 				ContextURL       string

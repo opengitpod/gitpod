@@ -24,6 +24,7 @@ import (
 	gitpod "github.com/gitpod-io/gitpod/gitpod-protocol"
 	agent "github.com/gitpod-io/gitpod/test/pkg/agent/workspace/api"
 	"github.com/gitpod-io/gitpod/test/pkg/integration"
+	"github.com/gitpod-io/gitpod/test/pkg/types"
 	wsmanapi "github.com/gitpod-io/gitpod/ws-manager/api"
 
 	volumesnapshotv1 "github.com/kubernetes-csi/external-snapshotter/client/v4/apis/volumesnapshot/v1"
@@ -66,6 +67,9 @@ func TestPrebuildWorkspaceTaskSuccess(t *testing.T) {
 			}
 			for _, test := range tests {
 				t.Run(test.Name, func(t *testing.T) {
+					t.Log(types.Prebuild)
+					t.Log("it should create a prebuild and succeed the defined tasks")
+
 					t.Parallel()
 
 					ctx, cancel := context.WithTimeout(context.Background(), time.Duration(5*len(tests))*time.Minute)

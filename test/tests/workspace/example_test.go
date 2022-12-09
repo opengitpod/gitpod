@@ -15,6 +15,7 @@ import (
 
 	agent "github.com/gitpod-io/gitpod/test/pkg/agent/workspace/api"
 	"github.com/gitpod-io/gitpod/test/pkg/integration"
+	"github.com/gitpod-io/gitpod/test/pkg/types"
 )
 
 func TestWorkspaceInstrumentation(t *testing.T) {
@@ -38,6 +39,11 @@ func TestWorkspaceInstrumentation(t *testing.T) {
 		Assess("it can instrument a workspace", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			for _, test := range tests {
 				t.Run(test.ContextURL, func(t *testing.T) {
+					// Output the feature type of this test for the Quality Assurance Report
+					t.Log(types.Example)
+					// Output the description of this test for the Quality Assurance Report
+					t.Log("this is the example test for instrumenting a workspace")
+
 					t.Parallel()
 
 					ctx, cancel := context.WithTimeout(context.Background(), time.Duration(5*len(tests))*time.Minute)
@@ -102,6 +108,11 @@ func TestLaunchWorkspaceDirectly(t *testing.T) {
 	f := features.New("workspace").
 		WithLabel("component", "server").
 		Assess("it can run workspace tasks", func(_ context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			// Output the feature type of this test for the Quality Assurance Report
+			t.Log(types.Example)
+			// Output the description of this test for the Quality Assurance Report
+			t.Log("this is the example test for launching a workspace directly")
+
 			t.Parallel()
 
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
