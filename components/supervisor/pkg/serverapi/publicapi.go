@@ -7,6 +7,7 @@ package serverapi
 import (
 	"context"
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"reflect"
 	"time"
@@ -42,6 +43,8 @@ const (
 	// KindGitpod marks tokens that provide access to the Gitpod server API.
 	KindGitpod = "gitpod"
 )
+
+var errNotConnected = errors.New("not connected to server/public api")
 
 type ServiceConfig struct {
 	Host              string
@@ -176,6 +179,9 @@ func (s *Service) usePublicAPI(ctx context.Context) bool {
 
 // GetToken implements protocol.APIInterface
 func (s *Service) GetToken(ctx context.Context, query *gitpod.GetTokenSearchOptions) (res *gitpod.Token, err error) {
+	if s == nil {
+		return nil, errNotConnected
+	}
 	if !s.usePublicAPI(ctx) {
 		return s.gitpodService.GetToken(ctx, query)
 	}
@@ -201,6 +207,9 @@ func (s *Service) GetToken(ctx context.Context, query *gitpod.GetTokenSearchOpti
 
 // OpenPort implements protocol.APIInterface
 func (s *Service) OpenPort(ctx context.Context, workspaceID string, port *gitpod.WorkspaceInstancePort) (res *gitpod.WorkspaceInstancePort, err error) {
+	if s == nil {
+		return nil, errNotConnected
+	}
 	if !s.usePublicAPI(ctx) {
 		return s.gitpodService.OpenPort(ctx, workspaceID, port)
 	}
@@ -304,6 +313,9 @@ func (s *Service) getWorkspaceInfo(ctx context.Context, instanceID, workspaceID 
 
 // InstanceUpdates implements protocol.APIInterface
 func (s *Service) InstanceUpdates(ctx context.Context, instanceID string, workspaceID string) (<-chan *gitpod.WorkspaceInstance, error) {
+	if s == nil {
+		return nil, errNotConnected
+	}
 	if !s.usePublicAPI(ctx) && s.persistServerAPIChannelWhenStart(ctx) {
 		return s.gitpodService.InstanceUpdates(ctx, instanceID)
 	}
@@ -330,6 +342,9 @@ func (s *Service) InstanceUpdates(ctx context.Context, instanceID string, worksp
 
 // GetOwnerID implements APIInterface
 func (s *Service) GetOwnerID(ctx context.Context, workspaceID string) (ownerID string, err error) {
+	if s == nil {
+		return "", errNotConnected
+	}
 	if !s.usePublicAPI(ctx) {
 		resp, err := s.gitpodService.GetWorkspace(ctx, workspaceID)
 		if err != nil {
@@ -348,9 +363,15 @@ func (s *Service) GetOwnerID(ctx context.Context, workspaceID string) (ownerID s
 }
 
 func (s *Service) TrackEvent(ctx context.Context, event *gitpod.RemoteTrackMessage) (err error) {
+	if s == nil {
+		return errNotConnected
+	}
 	return s.gitpodService.TrackEvent(ctx, event)
 }
 
 func (s *Service) RegisterMetrics(registry *prometheus.Registry) error {
+	if s == nil {
+		return errNotConnected
+	}
 	return registry.Register(s.publicApiMetrics)
 }
